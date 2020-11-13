@@ -26,7 +26,8 @@ client = discord.Client()       #create Discord object
 # vaious maps, so 'island', 'scorched', 'crystal', etc.
 #
 # maybe the best option would be to utilize the .env file and manually provide
-# a list of valid executables.
+# a list of valid executables. Maybe there is a better way to import external
+# data into this script, maybe xml or a .ini file?
 #############################################################
 
 
