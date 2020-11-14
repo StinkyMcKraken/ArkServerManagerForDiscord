@@ -60,11 +60,6 @@ async def on_message(message):    #when a message is received in the channel
     if message.content.startswith('$hello'):
         await message.channel.send('What\'s Crackin\'?')
 
-    #create a test file
-    elif message.content.startswith('$touch'):
-        rc = subprocess.call("/home/ark/discordbot/touch.sh")
-        await message.channel.send(rc)
-
     #help command
     elif message.content.startswith('$help'):
         helpmessage = """This version is super dumb and basic.
@@ -82,32 +77,28 @@ $update lgsm - updates LGSM itself. Should not be necessary but may be needed if
 
     #start ark server command
     elif message.content.startswith('$start genesis'):
-        rc = subprocess.call("/home/ark/genesis", "start")
-        await message.channel.send(rc)
-        #want to figure out how to run a bash script, capture stdout from that
-        #script and post the stdout back to Discord as a reply to the command
-        #Would be really cool to capture the stdout in real time as the script
-        #is in progress and update the Discord post with additional info
+        rc = subprocess.run(["/home/ark/genesis", "start"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
     #stop ark server command
     elif message.content.startswith('$stop genesis'):
-        rc = subprocess.call("/home/ark/genesis", "stop")
-        await message.channel.send(rc)
+        rc = subprocess.run(["/home/ark/genesis", "stop"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
     #ark server update
     elif message.content.startswith('$update genesis'):
-        rc = subprocess.call("/home/ark/genesis", "update")
-        await message.channel.send(rc)
+        rc = subprocess.run(["/home/ark/genesis", "update"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
     #ark force update
     elif message.content.startswith('$force genesis'):
-        rc = subprocess.call("/home/ark/arkserver", "fu")
-        await message.channel.send(rc)
+        rc = subprocess.run(["/home/ark/arkserver", "fu"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
     #ark update lgsm
     elif message.content.startswith('$update lgsm'):
-        rc = subprocess.call("/home/ark/genesis", "update-lgsm")
-        await message.channel.send(rc)
+        rc = subprocess.run(["/home/ark/genesis", "update-lgsm"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
     print(f'{message.author}:::{message.content}')  #echo message to console (debug)
 
