@@ -68,16 +68,16 @@ async def on_message(message):    #when a message is received in the channel
     #help command
     elif message.content.startswith('$help'):
         helpmessage = """This version is super dumb and basic.
-        WARNING THERE IS NO IDIOT PROOFING WITH THE FOLLOWING COMMANDS
-        ---
-        $hello - simple response test
-        $help - this message
-        $start genesis - starts Genesis instance
-        $stop genesis - stops Genesis instance.  Instant stop, no check for connected players
-        $update genesis - invokes standard LGSM update with version check. Server only stopped if update is available
-        $force genesis - invokes LGSM forced update. Server is stopped, updated, and restarted
-        $update lgsm - updates LGSM itself. Should not be necessary but may be needed if other commands fail
-        """
+WARNING THERE IS NO IDIOT PROOFING WITH THE FOLLOWING COMMANDS
+---
+$hello - simple response test
+$help - this message
+$start genesis - starts Genesis instance
+$stop genesis - stops Genesis instance.  Instant stop, no check for connected players
+$update genesis - invokes standard LGSM update with version check. Server only stopped if update is available
+$force genesis - invokes LGSM forced update. Server is stopped, updated, and restarted
+$update lgsm - updates LGSM itself. Should not be necessary but may be needed if other commands fail
+"""
         await message.channel.send(helpmessage)
 
     #start ark server command
