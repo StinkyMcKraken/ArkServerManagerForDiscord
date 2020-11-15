@@ -31,6 +31,12 @@ client = discord.Client()       #create Discord object
 #############################################################
 
 
+#############################################################
+#############################################################
+##  THIS IS A STRIPPED DOWN VERY BASIC COMMAND LINE TO MAKE STUFF WORK
+#############################################################
+#############################################################
+
 
 
 @client.event
@@ -52,36 +58,115 @@ async def on_message(message):    #when a message is received in the channel
 
     #equivalent to hello world
     if message.content.startswith('$hello'):
-        await message.channel.send('What\'s Crackin\'?')
+        await message.channel.send('What\'s Krackin\'?')
 
-    #create a test file
-    elif message.content.startswith('$touch'):
-        rc = subprocess.call("/home/ark/discordbot/touch.sh")
-        await message.channel.send(rc)
+    #help command
+    elif message.content.startswith('$help'):
+        helpmessage = """This version is super dumb and basic.
+WARNING THERE IS NO IDIOT PROOFING WITH THE FOLLOWING COMMANDS
+---
+$hello - simple response test
+$help - this message
+$start <server> - starts <server> instance
+$stop <server> - stops <server> instance.
+                Instant stop, no check for connected players
+$restart <server> - stops then starts <server>.
+                   Instant stop, no check for players
+$force update - invokes LGSM forced update. All running servers
+                are given 10 minute notification, stopped,
+                updated, and restarted
+$update lgsm - updates LGSM itself on all instances. Should not be
+               necessary but may be needed if other commands fail.
+               Does not stop servers
 
-    #start ark server command
-    elif message.content.startswith('$ark start'):
-        rc = subprocess.call("/home/ark/arkserver", "start")
-        #want to figure out how to run a bash script, capture stdout from that
-        #script and post the stdout back to Discord as a reply to the command
-        #Would be really cool to capture the stdout in real time as the script
-        #is in progress and update the Discord post with additional info
-
-    #stop ark server command
-    elif message.content.startswith('$ark stop'):
-        rc = subprocess.call("/home/ark/arkserver", "stop")
-
-    #ark server update
-    elif message.content.startswith('$ark update'):
-        rc = subprocess.call("/home/ark/arkserver", "update")
+Valid <server>s at this time:
+   island
+   genesis
+   aberration
+   ragnarok
+"""
+        await message.channel.send(helpmessage)
 
     #ark force update
-    elif message.content.startswith('$ark force update'):
-        rc = subprocess.call("/home/ark/arkserver", "fu")
+    elif message.content.startswith('$force update'):
+        rc = subprocess.run("/home/ark/scripts/multipleupdate.sh", capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
     #ark update lgsm
-    elif message.content.startswith('$ark update lgsm'):
-        rc = subprocess.call("/home/ark/arkserver", "update-lgsm")
+    elif message.content.startswith('$update lgsm'):
+        rc = subprocess.run(["/home/ark/arkserver", "update-lgsm"], capture_output=True, text=True)
+        rc = subprocess.run(["/home/ark/island", "update-lgsm"], capture_output=True, text=True)
+        rc = subprocess.run(["/home/ark/aberration", "update-lgsm"], capture_output=True, text=True)
+        rc = subprocess.run(["/home/ark/genesis", "update-lgsm"], capture_output=True, text=True)
+        rc = subprocess.run(["/home/ark/crystal", "update-lgsm"], capture_output=True, text=True)
+        rc = subprocess.run(["/home/ark/ragnarok", "update-lgsm"], capture_output=True, text=True)
+        await message.channel.send("LGSM updated on all instances")
+
+    #start genesis server
+    elif message.content.startswith('$start genesis'):
+        rc = subprocess.run(["/home/ark/genesis", "start"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #stop genesis server
+    elif message.content.startswith('$stop genesis'):
+        rc = subprocess.run(["/home/ark/genesis", "stop"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #restart genesis Server
+    elif message.content.startswith('$restart genesis'):
+        rc = subprocess.run(["/home/ark/genesis", "restart"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #start island server
+    elif message.content.startswith('$start island'):
+        rc = subprocess.run(["/home/ark/island", "start"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #stop island server
+    elif message.content.startswith('$stop island'):
+        rc = subprocess.run(["/home/ark/island", "stop"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #restart island Server
+    elif message.content.startswith('$restart island'):
+        rc = subprocess.run(["/home/ark/island", "restart"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #start aberration server
+    elif message.content.startswith('$start aberration'):
+        rc = subprocess.run(["/home/ark/aberration", "start"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #stop aberration server
+    elif message.content.startswith('$stop aberration'):
+        rc = subprocess.run(["/home/ark/aberration", "stop"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #restart aberration Server
+    elif message.content.startswith('$restart aberration'):
+        rc = subprocess.run(["/home/ark/aberration", "restart"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #start ragnarok server
+    elif message.content.startswith('$start ragnarok'):
+        rc = subprocess.run(["/home/ark/ragnarok", "start"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #stop ragnarok server
+    elif message.content.startswith('$stop ragnarok'):
+        rc = subprocess.run(["/home/ark/ragnarok", "stop"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #restart ragnarok Server
+    elif message.content.startswith('$restart ragnarok'):
+        rc = subprocess.run(["/home/ark/ragnarok", "restart"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    else:
+        await message.channel.send("Krak off, you'r kiddin' me!!")
+        #C to K error, please remedy
+        #C to K?
+        #problem exists between Chair and Keyboard. Please examine and remedy, you dumdum
 
     print(f'{message.author}:::{message.content}')  #echo message to console (debug)
 
