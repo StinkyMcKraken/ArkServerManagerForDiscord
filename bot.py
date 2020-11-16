@@ -67,9 +67,8 @@ WARNING THERE IS NO IDIOT PROOFING WITH THE FOLLOWING COMMANDS
 ---
 $hello - simple response test
 $help - this message
-$start <server> - starts <server> instance
-$stop <server> - stops <server> instance.
-                Instant stop, no check for connected players
+$start <server> - you need an explanation ?
+$stop <server> - Instant stop, no check for connected players
 $restart <server> - stops then starts <server>.
                    Instant stop, no check for players
 $force update - invokes LGSM forced update. All running servers
@@ -79,11 +78,16 @@ $update lgsm - updates LGSM itself on all instances. Should not be
                necessary but may be needed if other commands fail.
                Does not stop servers
 
-Valid <server>s at this time:
-   island
-   genesis
-   aberration
-   ragnarok
+Valid <server> at this time:
+   island       27001
+   aberration   27002
+   ragnarok     27003
+   scorched     27004
+   center       27005
+   crystal      27006
+   extinction   27007
+   valguero     27008
+   genesis      27009
 """
         await message.channel.send(helpmessage)
 
@@ -94,28 +98,17 @@ Valid <server>s at this time:
 
     #ark update lgsm
     elif message.content.startswith('$update lgsm'):
-        rc = subprocess.run(["/home/ark/arkserver", "update-lgsm"], capture_output=True, text=True)
-        rc = subprocess.run(["/home/ark/island", "update-lgsm"], capture_output=True, text=True)
-        rc = subprocess.run(["/home/ark/aberration", "update-lgsm"], capture_output=True, text=True)
-        rc = subprocess.run(["/home/ark/genesis", "update-lgsm"], capture_output=True, text=True)
-        rc = subprocess.run(["/home/ark/crystal", "update-lgsm"], capture_output=True, text=True)
-        rc = subprocess.run(["/home/ark/ragnarok", "update-lgsm"], capture_output=True, text=True)
+        rc = subprocess.run(["/home/ark/arkserver", "update-lgsm"])
+        rc = subprocess.run(["/home/ark/island", "update-lgsm"])
+        rc = subprocess.run(["/home/ark/aberration", "update-lgsm"])
+        rc = subprocess.run(["/home/ark/ragnarok", "update-lgsm"])
+        rc = subprocess.run(["/home/ark/scorched", "update-lgsm"])
+        rc = subprocess.run(["/home/ark/center", "update-lgsm"])
+        rc = subprocess.run(["/home/ark/crystal", "update-lgsm"])
+        rc = subprocess.run(["/home/ark/extinction", "update-lgsm"])
+        rc = subprocess.run(["/home/ark/valguero", "update-lgsm"])
+        rc = subprocess.run(["/home/ark/genesis", "update-lgsm"])
         await message.channel.send("LGSM updated on all instances")
-
-    #start genesis server
-    elif message.content.startswith('$start genesis'):
-        rc = subprocess.run(["/home/ark/genesis", "start"], capture_output=True, text=True)
-        await message.channel.send(rc.stdout + "\n" + rc.stderr)
-
-    #stop genesis server
-    elif message.content.startswith('$stop genesis'):
-        rc = subprocess.run(["/home/ark/genesis", "stop"], capture_output=True, text=True)
-        await message.channel.send(rc.stdout + "\n" + rc.stderr)
-
-    #restart genesis Server
-    elif message.content.startswith('$restart genesis'):
-        rc = subprocess.run(["/home/ark/genesis", "restart"], capture_output=True, text=True)
-        await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
     #start island server
     elif message.content.startswith('$start island'):
@@ -160,6 +153,96 @@ Valid <server>s at this time:
     #restart ragnarok Server
     elif message.content.startswith('$restart ragnarok'):
         rc = subprocess.run(["/home/ark/ragnarok", "restart"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #start scorched earth server
+    elif message.content.startswith('$start scorched'):
+        rc = subprocess.run(["/home/ark/scorched", "start"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #stop scorched earth server
+    elif message.content.startswith('$stop scorched'):
+        rc = subprocess.run(["/home/ark/scorched", "stop"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #restart scorched earth Server
+    elif message.content.startswith('$restart scorched'):
+        rc = subprocess.run(["/home/ark/scorched", "restart"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #start the center server
+    elif message.content.startswith('$start center'):
+        rc = subprocess.run(["/home/ark/center", "start"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #stop the center server
+    elif message.content.startswith('$stop center'):
+        rc = subprocess.run(["/home/ark/center", "stop"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #restart the center Server
+    elif message.content.startswith('$restart center'):
+        rc = subprocess.run(["/home/ark/center", "restart"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #start crystal isles server
+    elif message.content.startswith('$start crystal'):
+        rc = subprocess.run(["/home/ark/crystal", "start"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #stop crystal isles server
+    elif message.content.startswith('$stop crystal'):
+        rc = subprocess.run(["/home/ark/crystal", "stop"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #restart crystal isles Server
+    elif message.content.startswith('$restart crystal'):
+        rc = subprocess.run(["/home/ark/crystal", "restart"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #start extinction server
+    elif message.content.startswith('$start extinction'):
+        rc = subprocess.run(["/home/ark/extinction", "start"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #stop extinction server
+    elif message.content.startswith('$stop extinction'):
+        rc = subprocess.run(["/home/ark/extinction", "stop"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #restart extinction Server
+    elif message.content.startswith('$restart extinction'):
+        rc = subprocess.run(["/home/ark/extinction", "restart"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #start valguero server
+    elif message.content.startswith('$start valguero'):
+        rc = subprocess.run(["/home/ark/valguero", "start"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #stop valguero server
+    elif message.content.startswith('$stop valguero'):
+        rc = subprocess.run(["/home/ark/valguero", "stop"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #restart valguero Server
+    elif message.content.startswith('$restart valguero'):
+        rc = subprocess.run(["/home/ark/valguero", "restart"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #start genesis server
+    elif message.content.startswith('$start genesis'):
+        rc = subprocess.run(["/home/ark/genesis", "start"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #stop genesis server
+    elif message.content.startswith('$stop genesis'):
+        rc = subprocess.run(["/home/ark/genesis", "stop"], capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    #restart genesis Server
+    elif message.content.startswith('$restart genesis'):
+        rc = subprocess.run(["/home/ark/genesis", "restart"], capture_output=True, text=True)
         await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
     else:
