@@ -95,7 +95,7 @@ Valid <server> at this time:
     elif message.content.startswith('$force update'):
         await message.channel.send("Starting Forced Update in-game notification script. Please wait 15 minutes for update and restart to complete.")
         rc = subprocess.run("/home/ark/scripts/multipleupdate.sh", capture_output=True, text=True)
-        await message.channel.send(rc.stdout + "\n" + rc.stderr + " Update and Restart complete.")
+        await message.channel.send(rc.stdout + "\n" + rc.stderr + "\nUpdate and Restart complete.")
 
     #ark update lgsm
     elif message.content.startswith('$update lgsm'):
