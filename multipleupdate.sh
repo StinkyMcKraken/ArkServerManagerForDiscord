@@ -16,7 +16,7 @@ done
 wait
 
 #stop all servers
-echo **stopping servers
+echo [stopping servers]
 for server in ${lockfiles[@]}
 do
   /home/ark/${server} stop &
@@ -26,7 +26,7 @@ wait
 
 #update lgsm on all instances
 #this update should run sequentially on each instance instead of simultaneously
-echo **updating lgsm
+echo [updating lgsm]
 for server in ${lockfiles[@]}
 do
   /home/ark/${server} update-lgsm
@@ -35,11 +35,11 @@ done
 #force update server binary since the regular update does not always
 #pick up minor updates
 #not necessary to run binary updates on each instance
-echo **updating server
-/home/ark/${lockfiles[0]} force-update
+echo [updating server]
+/home/ark/arkserver force-update
 
 #restart stopped servers
-echo **restarting server
+echo [restarting server]
 for server in ${lockfiles[@]}
 do
   /home/ark/${server} start &
@@ -48,5 +48,5 @@ done
 wait
 
 #send test notification to discord indicating backup is complete
-echo **done!!
+echo [done]
 #/home/ark/${lockfiles[0]} test-alert

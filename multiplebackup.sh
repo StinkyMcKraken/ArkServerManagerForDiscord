@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #check for running instances by checking for lockfiles
-lockfiles=($(find "/home/ark/lgsm/lock" -maxdepth 1 -type f \( -iname "*.lock" ! -name "*laststart.lock" ! -name "lastupdate.lock" ! -name "backup.lock"\) -printf "%f\n"))
+lockfiles=($(find "/home/ark/lgsm/lock" -maxdepth 1 -type f \( -iname "*.lock" ! -name "*laststart.lock" ! -name "lastupdate.lock" ! -name "backup.lock" \) -printf "%f\n"))
 
 #strip trailing '.lock' from filename
 #and launch notification script for each lockfile/server found
@@ -10,13 +10,13 @@ for (( i=0; i<=$(( ${#lockfiles[*]} -1 )); i++ ))
 do
   lockfiles[$i]=${lockfiles[$i]%%.lock}
   /home/ark/scripts/sendbackupnotice.sh ${lockfiles[$i]} &
-  echo ${lockfiles[$i]}
+  echo ${$i} ${lockfiles[$i]}
 done
 #wait for notification scripts to end
 wait
 
 #stop all servers
-echo []stopping servers
+echo [stopping servers]
 for server in ${lockfiles[@]}
 do
   /home/ark/${server} stop &
@@ -26,7 +26,7 @@ wait
 
 #update lgsm on all instances
 #this command should run sequentially on each instance instead of simultaneously
-echo []updating lgsm
+echo [updating lgsm]
 for server in ${lockfiles[@]}
 do
   /home/ark/${server} update-lgsm
@@ -35,17 +35,17 @@ done
 #run backup on one of the servers. we are running instances,
 #backing up one server will backup entire home directory including
 #savefiles of other instances
-echo []starting backup
-/home/ark/${lockfiles[0]} backup
+echo [starting backup]
+/home/ark/arkserver backup
 
 #force update server binary since the regular update does not always
 #pick up minor updates
 #not necessary to run binary updates on each instance
-echo []updating server
-/home/ark/${lockfiles[0]} force-update
+echo [updating server]
+/home/ark/arkserver force-update
 
 #restart stopped servers
-echo []restarting servers
+echo [restarting servers]
 for server in ${lockfiles[@]}
 do
   /home/ark/${server} start &
@@ -54,5 +54,5 @@ done
 wait
 
 #send test notification to discord indicating backup is complete
-echo []done
+echo [done]
 #/home/ark/${lockfiles[0]} test-alert
