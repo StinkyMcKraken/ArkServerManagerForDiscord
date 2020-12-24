@@ -39,7 +39,7 @@ client = discord.Client()       #create Discord object
 
 #variable to detect if another command is running.  cannot have multiple
 #commands overlapping themselves.
-somethingrunning = false
+somethingrunning = False
 
 
 @client.event
