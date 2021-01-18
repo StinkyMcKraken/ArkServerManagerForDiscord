@@ -64,20 +64,34 @@ async def on_message(message):    #when a message is received in the channel
 WARNING THERE IS NO IDIOT PROOFING WITH THE FOLLOWING COMMANDS
 ---
 $hello - simple response test
+
 $help - this message
+
+$status - lists all running servers and players connected
+
 $start <server> - you need an explanation ?
+
 $stop <server> - Instant stop, no check for connected players
+
 $restart <server> - stops then starts <server>.
                    Instant stop, no check for players
+
 $force update - invokes LGSM forced update. All running servers
                 are given 10 minute notification, stopped,
-                updated, and restarted
+                updated, and restarted.
+                Cheat mode: if you manually stop all running
+                servers prior to running this command, it will
+                skip the 10 minute notification process. Servers
+                will need to be manually restarted after the update.
+
 $backup - invokes LGSM backup. All running servers are given
                 10 minute notification, stopped, backedup,
-                updated, and restarted
+                updated, and restarted. Same cheat as $force update
+
 $update lgsm - updates LGSM itself on all instances. Should not be
                necessary but may be needed if other commands fail.
                Does not stop servers
+
 
 Valid <server> at this time:
    island       27001
@@ -91,6 +105,11 @@ Valid <server> at this time:
    genesis      27009
 """
         await message.channel.send(helpmessage)
+
+    #bot server status
+    elif message.content.startswith('$status'):
+        rc = subprocess.run("/home/ark/scripts/status.sh", capture_output=True, text=True)
+        await message.channel.send(rc.stdout + "\n")
 
     #ark force update
     elif message.content.startswith('$force update'):

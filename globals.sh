@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#global variables for johnny kay's ark notification scripts
+# global variables for johnny kay's ark notification scripts
 # setup variables used by multiple scripts
 configdirserver="/home/ark/lgsm/config-lgsm/arkserver"
 serveradminpassword="Swingline5"
@@ -25,4 +25,4 @@ if [ "${ip}" == "0.0.0.0" ]||[ "${ip}" == "" ]; then
   exit 1
 fi
 
-rcon="${mcrconpath} -H ${ip} -P ${rconport} -p ${serveradminpassword} -s"
+rcon="${mcrconpath} -H ${ip} -P ${rconport} -p ${serveradminpassword}"
