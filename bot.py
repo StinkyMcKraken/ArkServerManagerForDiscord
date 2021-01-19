@@ -1,7 +1,7 @@
 # bot.py
 import os
 
-#documentation for discord.py is at https://discordpy.readthedocs.io/en/latest/
+# documentation for discord.py is at https://discordpy.readthedocs.io/en/latest/
 
 import discord      #import discord.py library
 import subprocess   #import subprocess library
@@ -47,71 +47,70 @@ async def on_ready():           #when Discord session is ready, echo status to c
         print(f'{guild.name}(id: {guild.id})\n')
 
 @client.event
-async def on_message(message):    #when a message is received in the channel
+async def on_message(message):    # when a message is received in the channel
     if message.author == client.user:   #ignore messages from myself
         return
 
-    if not(message.content.startswith('$')):  #ignore messages not starting with '$'
+    if not(message.content.startswith('$')):  # ignore messages not starting with '$'
         return
 
-    #equivalent to hello world
+    # equivalent to hello world
     if message.content.startswith('$hello'):
         await message.channel.send('What\'s Krackin\'?')
 
-    #help command
+    # help command
     elif message.content.startswith('$help'):
         helpmessage = """This version is super dumb and basic.
 WARNING THERE IS NO IDIOT PROOFING WITH THE FOLLOWING COMMANDS
 ---
-$hello - simple response test
+**$hello** -
+simple response test
 
-$help - this message
+**$help** -
+this message
 
-$status - lists all running servers and players connected
+**$status** -
+lists all running servers and players connected
 
-$start <server> - you need an explanation ?
+**$start <server>** -
+you need an explanation ?
 
-$stop <server> - Instant stop, no check for connected players
+**$stop <server>** -
+Instant stop, no check for connected players
 
-$restart <server> - stops then starts <server>.
-                   Instant stop, no check for players
+**$restart <server>** -
+stops then starts <server>. Instant stop, no check for players
 
-$force update - invokes LGSM forced update. All running servers
-                are given 10 minute notification, stopped,
-                updated, and restarted.
-                Cheat mode: if you manually stop all running
-                servers prior to running this command, it will
-                skip the 10 minute notification process. Servers
-                will need to be manually restarted after the update.
+**$force update** -
+invokes LGSM forced update. All running servers are given 10 minute notification, stopped, updated, and restarted.
+*Cheat mode*: if you manually stop all running servers prior to running this command, it will skip the 10 minute notification process. Servers will need to be manually restarted after the update.
 
-$backup - invokes LGSM backup. All running servers are given
-                10 minute notification, stopped, backedup,
-                updated, and restarted. Same cheat as $force update
+**$backup** -
+invokes LGSM backup. All running servers are given 10 minute notification, stopped, backedup, updated, and restarted. Same cheat as $force update
 
-$update lgsm - updates LGSM itself on all instances. Should not be
-               necessary but may be needed if other commands fail.
-               Does not stop servers
+**$update lgsm** -
+updates LGSM itself on all instances. Should not be necessary but may be needed if other commands fail. Does not stop servers
 
 
-Valid <server> at this time:
-   island       27001
-   aberration   27002
-   ragnarok     27003
-   scorched     27004
-   center       27005
-   crystal      27006
-   extinction   27007
-   valguero     27008
-   genesis      27009
+**Valid <server> at this time**:
+27001 island
+27002 aberration
+27003 ragnarok
+27004 scorched
+27005 center
+27006 crystal
+27007 extinction
+27008 valguero
+27009 genesis
 """
         await message.channel.send(helpmessage)
 
-    #bot server status
+    # bot server status
     elif message.content.startswith('$status'):
         rc = subprocess.run("/home/ark/scripts/status.sh", capture_output=True, text=True)
         await message.channel.send(rc.stdout + "\n")
 
-    #ark force update
+    # ark force update
     elif message.content.startswith('$force update'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -122,7 +121,7 @@ Valid <server> at this time:
             await message.channel.send(rc.stdout + "\n" + rc.stderr + "\nUpdate and Restart complete.")
 #            somethingrunning = False
 
-    #ark backup
+    # ark backup
     elif message.content.startswith('$backup'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -133,7 +132,7 @@ Valid <server> at this time:
             await message.channel.send(rc.stdout + "\n" + rc.stderr + "\nBackup, Update, and Restart complete.")
 #            somethingrunning = False
 
-    #ark update lgsm
+    # ark update lgsm
     elif message.content.startswith('$update lgsm'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -152,7 +151,7 @@ Valid <server> at this time:
             await message.channel.send("LGSM updated on all instances")
 #            somethingrunning = False
 
-    #start island server
+    # start island server
     elif message.content.startswith('$start island'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -160,7 +159,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/island", "start"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #stop island server
+    # stop island server
     elif message.content.startswith('$stop island'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -168,7 +167,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/island", "stop"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #restart island Server
+    # restart island Server
     elif message.content.startswith('$restart island'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -176,7 +175,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/island", "restart"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #start aberration server
+    # start aberration server
     elif message.content.startswith('$start aberration'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -184,7 +183,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/aberration", "start"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #stop aberration server
+    # stop aberration server
     elif message.content.startswith('$stop aberration'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -192,7 +191,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/aberration", "stop"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #restart aberration Server
+    # restart aberration Server
     elif message.content.startswith('$restart aberration'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -200,7 +199,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/aberration", "restart"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #start ragnarok server
+    # start ragnarok server
     elif message.content.startswith('$start ragnarok'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -208,7 +207,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/ragnarok", "start"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #stop ragnarok server
+    # stop ragnarok server
     elif message.content.startswith('$stop ragnarok'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -216,7 +215,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/ragnarok", "stop"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #restart ragnarok Server
+    # restart ragnarok Server
     elif message.content.startswith('$restart ragnarok'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -224,7 +223,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/ragnarok", "restart"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #start scorched earth server
+    # start scorched earth server
     elif message.content.startswith('$start scorched'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -232,7 +231,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/scorched", "start"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #stop scorched earth server
+    # stop scorched earth server
     elif message.content.startswith('$stop scorched'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -240,7 +239,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/scorched", "stop"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #restart scorched earth Server
+    # restart scorched earth Server
     elif message.content.startswith('$restart scorched'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -248,7 +247,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/scorched", "restart"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #start the center server
+    # start the center server
     elif message.content.startswith('$start center'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -256,7 +255,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/center", "start"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #stop the center server
+    # stop the center server
     elif message.content.startswith('$stop center'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -264,7 +263,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/center", "stop"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #restart the center Server
+    # restart the center Server
     elif message.content.startswith('$restart center'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -272,7 +271,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/center", "restart"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #start crystal isles server
+    # start crystal isles server
     elif message.content.startswith('$start crystal'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -280,7 +279,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/crystal", "start"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #stop crystal isles server
+    # stop crystal isles server
     elif message.content.startswith('$stop crystal'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -288,7 +287,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/crystal", "stop"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #restart crystal isles Server
+    # restart crystal isles Server
     elif message.content.startswith('$restart crystal'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -296,7 +295,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/crystal", "restart"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #start extinction server
+    # start extinction server
     elif message.content.startswith('$start extinction'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -304,7 +303,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/extinction", "start"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #stop extinction server
+    # stop extinction server
     elif message.content.startswith('$stop extinction'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -312,7 +311,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/extinction", "stop"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #restart extinction Server
+    # restart extinction Server
     elif message.content.startswith('$restart extinction'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -320,7 +319,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/extinction", "restart"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #start valguero server
+    # start valguero server
     elif message.content.startswith('$start valguero'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -328,7 +327,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/valguero", "start"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #stop valguero server
+    # stop valguero server
     elif message.content.startswith('$stop valguero'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -336,7 +335,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/valguero", "stop"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #restart valguero Server
+    # restart valguero Server
     elif message.content.startswith('$restart valguero'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -344,7 +343,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/valguero", "restart"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #start genesis server
+    # start genesis server
     elif message.content.startswith('$start genesis'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -352,7 +351,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/genesis", "start"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #stop genesis server
+    # stop genesis server
     elif message.content.startswith('$stop genesis'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -360,7 +359,7 @@ Valid <server> at this time:
             rc = subprocess.run(["/home/ark/genesis", "stop"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
-    #restart genesis Server
+    # restart genesis Server
     elif message.content.startswith('$restart genesis'):
 #        if somethingrunning:
 #            await message.channel.send("Please wait for previous command to finish")
@@ -369,15 +368,16 @@ Valid <server> at this time:
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
     else:
-        await message.channel.send("Krak off, you'r kiddin' me!!")
-        #C to K error, please remedy
-        #C to K?
-        #problem exists between Chair and Keyboard. Please examine and remedy, you dumdum
+        await message.channel.send("C to K error, please remedy")
+        # Krak off, you'r kiddin' me!!
+        # C to K error, please remedy
+        # C to K?
+        # problem exists between Chair and Keyboard. Please examine and remedy, you dumdum
 
     #print(f'{message.author}:::{message.content}')  #echo message to console (debug)
 
-#variable to detect if another command is running.  cannot have multiple
-#commands overlapping themselves.
+# variable to detect if another command is running.  cannot have multiple
+# commands overlapping themselves.
 #somethingrunning = False
 
 client.run(TOKEN)       #actually start the Discord session

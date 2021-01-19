@@ -24,5 +24,5 @@ do
   selfname=${lockfiles[$i]}
   source /home/ark/scripts/globals.sh
   # run rcon command to get player list
-  ${rcon} listplayers
+  ${rcon} -c listplayers
 done

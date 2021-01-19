@@ -7,6 +7,7 @@
 #check for running instances by checking for lockfiles
 lockfiles=($(find "/home/ark/lgsm/lock" -maxdepth 1 -type f \( -iname "*.lock" ! -name "*laststart.lock" ! -name "lastupdate.lock" ! -name "backup.lock"\) -printf "%f\n"))
 
+echo **notifying instances**
 # strip trailing '.lock' from filename
 # and launch notification script for each lockfile/instance found
 # notification scripts should run simultaneously on all active instances
@@ -20,7 +21,7 @@ done
 wait
 
 # stop all instances
-echo []stopping instance(s)
+echo **stopping instances**
 for instance in ${lockfiles[@]}
 do
   /home/ark/${instance} stop &
@@ -30,7 +31,7 @@ wait
 
 # update lgsm on all instances
 # this command should run sequentially on each instance instead of simultaneously
-echo []updating lgsm
+echo **updating lgsm**
 for instance in ${lockfiles[@]}
 do
   /home/ark/${instance} update-lgsm
@@ -40,17 +41,17 @@ done
 # backing up one instance will backup entire home directory including
 # savefiles of other instances.  Using generic instance to make
 # backup files consistent
-echo []starting backup
+echo **starting backup**
 /home/ark/arkserver backup
 
 # force update server binary since the regular update does not always
 # pick up minor updates
 # not necessary to run binary updates on each instance
-echo []updating server
+echo **updating server**
 /home/ark/arkserver force-update
 
 # restart stopped instances
-echo []restarting instance(s)
+echo **restarting instances**
 for instance in ${lockfiles[@]}
 do
   /home/ark/${instance} start &
@@ -59,5 +60,5 @@ done
 wait
 
 # send test notification to discord indicating backup is complete
-echo []done
+echo **done**
 #/home/ark/${lockfiles[0]} test-alert
