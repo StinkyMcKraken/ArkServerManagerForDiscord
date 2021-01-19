@@ -19,10 +19,10 @@ do
   # strip trailing '.lock' from filename
   lockfiles[$i]=${lockfiles[$i]%%.lock}
   # output servername
-  echo ${lockfiles[$i]}
+  echo \*\*${lockfiles[$i]}\*\*
   # get variables from lgsm config files
   selfname=${lockfiles[$i]}
   source /home/ark/scripts/globals.sh
   # run rcon command to get player list
-  ${rcon} listplayers
+  ${rcon} -c listplayers
 done
