@@ -3,8 +3,9 @@ import os
 
 # documentation for discord.py is at https://discordpy.readthedocs.io/en/latest/
 
-import discord      #import discord.py library
-import subprocess   #import subprocess library
+import discord      # import discord.py library
+import subprocess   # import subprocess library
+import random       # import random library
 from dotenv import load_dotenv      #import function from dotenv library
 
 # Test for existence of file .env where info like the token for Discord is held
@@ -367,12 +368,18 @@ updates LGSM itself on all instances. Should not be necessary but may be needed 
             rc = subprocess.run(["/home/ark/genesis", "restart"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
+    # unknown command, return random error message
     else:
-        await message.channel.send("C to K error, please remedy")
-        # Krak off, you'r kiddin' me!!
-        # C to K error, please remedy
-        # C to K?
-        # problem exists between Chair and Keyboard. Please examine and remedy, you dumdum
+        error_quotes = [
+            "Krak off, you\'r kiddin\' me!!",
+            "C to K error, please remedy",
+            "EEP!",
+            "Problem exists between Chair and Keyboard. Please examine and remedy, you dumdum",
+            "I know not what this is you speak of",
+            "Crap!"
+        ]
+        response = random.choice(error_quotes)
+        await message.channel.send(response)
 
     #print(f'{message.author}:::{message.content}')  #echo message to console (debug)
 
