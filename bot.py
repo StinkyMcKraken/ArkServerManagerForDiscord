@@ -63,6 +63,7 @@ async def on_message(message):    # when a message is received in the channel
     elif message.content.startswith('$help'):
         helpmessage = """This version is super dumb and basic.
 WARNING THERE IS NO IDIOT PROOFING WITH THE FOLLOWING COMMANDS
+BEST TO LET ONE COMMAND COMPLETE BEFORE STARTING ANOTHER
 ---
 **$hello** -
 simple response test
@@ -103,6 +104,7 @@ updates LGSM itself on all instances. Should not be necessary but may be needed 
 27007 extinction
 27008 valguero
 27009 genesis
+27011 arkadmin (island)
 """
         await message.channel.send(helpmessage)
 
@@ -366,6 +368,30 @@ updates LGSM itself on all instances. Should not be necessary but may be needed 
 #            await message.channel.send("Please wait for previous command to finish")
 #        else:
             rc = subprocess.run(["/home/ark/genesis", "restart"], capture_output=True, text=True)
+            await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    # start arkadmin server
+    elif message.content.startswith('$start arkadmin'):
+#        if somethingrunning:
+#            await message.channel.send("Please wait for previous command to finish")
+#        else:
+            rc = subprocess.run(["/home/ark/arkadmin", "start"], capture_output=True, text=True)
+            await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    # stop arkadmin server
+    elif message.content.startswith('$stop arkadmin'):
+#        if somethingrunning:
+#            await message.channel.send("Please wait for previous command to finish")
+#        else:
+            rc = subprocess.run(["/home/ark/arkadmin", "stop"], capture_output=True, text=True)
+            await message.channel.send(rc.stdout + "\n" + rc.stderr)
+
+    # restart arkadmin Server
+    elif message.content.startswith('$restart arkadmin'):
+#        if somethingrunning:
+#            await message.channel.send("Please wait for previous command to finish")
+#        else:
+            rc = subprocess.run(["/home/ark/arkadmin", "restart"], capture_output=True, text=True)
             await message.channel.send(rc.stdout + "\n" + rc.stderr)
 
     # unknown command, return random error message
