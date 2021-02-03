@@ -132,7 +132,7 @@ updates LGSM itself on all instances. Should not be necessary but may be needed 
 #            somethingrunning = True
             await message.channel.send("Starting Backup in-game notification script. Please wait 30-40 minutes for backup, update, and restart to complete.")
             rc = subprocess.run("/home/ark/scripts/multiplebackup.sh", capture_output=True, text=True)
-            await message.channel.send(rc.stdout + "\n" + rc.stderr + "\nBackup, Update, and Restart complete.")
+            await message.channel.send(rc.stdout + "\n" + rc.stderr + "\nbot.py: Backup, Update, and Restart complete.")
 #            somethingrunning = False
 
     # ark update lgsm
@@ -141,7 +141,9 @@ updates LGSM itself on all instances. Should not be necessary but may be needed 
 #            await message.channel.send("Please wait for previous command to finish")
 #        else:
 #            somethingrunning = True
+            await message.channel.send("Updating LGSM")
             rc = subprocess.run(["/home/ark/arkserver", "update-lgsm"])
+            await message.channel.send(rc.stdout)
             rc = subprocess.run(["/home/ark/island", "update-lgsm"])
             rc = subprocess.run(["/home/ark/aberration", "update-lgsm"])
             rc = subprocess.run(["/home/ark/ragnarok", "update-lgsm"])
@@ -403,6 +405,8 @@ updates LGSM itself on all instances. Should not be necessary but may be needed 
             "Problem exists between Chair and Keyboard. Please examine and remedy, you dumdum",
             "I know not what this is you speak of",
             "Crap!"
+            "f*k"
+            "Black magic, the allure it tempting.  It's easy, and fun, like Legos"
         ]
         response = random.choice(error_quotes)
         await message.channel.send(response)

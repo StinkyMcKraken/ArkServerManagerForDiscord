@@ -5,7 +5,7 @@
 # lgsm force update on the generic instance, and restarts each instance.
 
 # check for running instances by checking for lockfiles
-lockfiles=($(find "/home/ark/lgsm/lock" -maxdepth 1 -type f \( -iname "*.lock" ! -name "*laststart.lock" ! -name "lastupdate.lock" ! -name "backup.lock" \) -printf "%f\n"))
+lockfiles=($(find "/home/ark/lgsm/lock" -maxdepth 1 -type f -iname "*.lock" ! -name "*laststart.lock" ! -name "lastupdate.lock" ! -name "backup.lock" -printf "%f\n"))
 
 echo **notification script**
 # strip trailing '.lock' from filename
