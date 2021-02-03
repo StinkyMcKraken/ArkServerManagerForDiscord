@@ -141,7 +141,7 @@ updates LGSM itself on all instances. Should not be necessary but may be needed 
 #            await message.channel.send("Please wait for previous command to finish")
 #        else:
 #            somethingrunning = True
-            await message.channel.send("Updating LGSM")
+            await message.channel.send("**:Updating LGSM:**")
             rc = subprocess.run(["/home/ark/arkserver", "update-lgsm"])
             await message.channel.send(rc.stdout)
             rc = subprocess.run(["/home/ark/island", "update-lgsm"])
@@ -153,7 +153,7 @@ updates LGSM itself on all instances. Should not be necessary but may be needed 
             rc = subprocess.run(["/home/ark/extinction", "update-lgsm"])
             rc = subprocess.run(["/home/ark/valguero", "update-lgsm"])
             rc = subprocess.run(["/home/ark/genesis", "update-lgsm"])
-            await message.channel.send("LGSM updated on all instances")
+            await message.channel.send("**:LGSM updated on all instances:**")
 #            somethingrunning = False
 
     # start island server
