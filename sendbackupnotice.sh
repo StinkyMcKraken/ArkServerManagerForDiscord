@@ -17,19 +17,25 @@ message="Broadcast Server Shutdown for BACKUP in"
 # run notifications every minute until less than a minute
 while (( ${time} > 1 ))
 do
-  ${rcon} "${message} ${time} minutes"
+  tempmessage="${message} ${time} minutes"
+  echo ${tempmessage}
+  ${rcon} ${tempmessage}
 	sleep 1m
 	time=$(( ${time} - 1 ))
 done
 
 # send message to server chat with additional information
-${rcon} "serverchat Server will perform a backup, takes about 30 minutes."
+tempmessage="serverchat Server will perform a backup, takes about 30 minutes."
+echo ${tempmessage}
+${rcon} ${tempmessage}
 
 # notifications every 10 seconds in the last minute
 time=60
 while (( ${time} > 10 ))
 do
-	${rcon} "${message} ${time} seconds"
+	tempmessage="${message} ${time} seconds"
+  echo ${tempmessage}
+  ${rcon} ${tempmessage}
 	sleep 10
 	time=$(( ${time} - 10 ))
 done
@@ -37,10 +43,14 @@ done
 # notifications every second in the last 10 seconds
 while (( ${time} > 0 ))
 do
-	${rcon} "${message} ${time} seconds"
+	tempmessage="${message} ${time} seconds"
+  echo ${tempmessage}
+  ${rcon} ${tempmessage}
 	sleep 1
 	time=$(( ${time} - 1 ))
 done
 
 # final notification
-${rcon} "Broadcast Buh Bye!!  See you in 30 minutes!!"
+tempmessage="Broadcast Buh Bye!!  See you in 30 minutes!!"
+echo ${tempmessage}
+${rcon} ${tempmessage}
