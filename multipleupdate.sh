@@ -31,11 +31,11 @@ wait
 
 # update lgsm on all instances
 # this update should run sequentially on each instance instead of simultaneously
-echo **updating lgsm**
-for instance in ${lockfiles[@]}
-do
-  /home/ark/${instance} update-lgsm
-done
+echo **NOT updating lgsm**
+#for instance in ${lockfiles[@]}
+#do
+#  /home/ark/${instance} update-lgsm
+#done
 
 # force update server binary since the regular update does not always
 # pick up minor updates
