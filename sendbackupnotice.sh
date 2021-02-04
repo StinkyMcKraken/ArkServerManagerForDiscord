@@ -12,30 +12,27 @@ source "/home/ark/scripts/globals.sh"
 # figure out how to test for time variable.  if unset, then give it a default
 # default time specified in globals.sh
 
-message="Broadcast Server Shutdown for BACKUP in"
+message="broadcast Server Shutdown for BACKUP in"
 
 # run notifications every minute until less than a minute
 while (( ${time} > 1 ))
 do
   tempmessage="${message} ${time} minutes"
-  echo ${tempmessage}
-  ${rcon} ${tempmessage}
+  ${rcon} "${tempmessage}"
 	sleep 1m
 	time=$(( ${time} - 1 ))
 done
 
 # send message to server chat with additional information
 tempmessage="serverchat Server will perform a backup, takes about 30 minutes."
-echo ${tempmessage}
-${rcon} ${tempmessage}
+${rcon} "${tempmessage}"
 
 # notifications every 10 seconds in the last minute
 time=60
 while (( ${time} > 10 ))
 do
 	tempmessage="${message} ${time} seconds"
-  echo ${tempmessage}
-  ${rcon} ${tempmessage}
+  ${rcon} "${tempmessage}"
 	sleep 10
 	time=$(( ${time} - 10 ))
 done
@@ -44,13 +41,11 @@ done
 while (( ${time} > 0 ))
 do
 	tempmessage="${message} ${time} seconds"
-  echo ${tempmessage}
-  ${rcon} ${tempmessage}
+  ${rcon} "${tempmessage}"
 	sleep 1
 	time=$(( ${time} - 1 ))
 done
 
 # final notification
-tempmessage="Broadcast Buh Bye!!  See you in 30 minutes!!"
-echo ${tempmessage}
-${rcon} ${tempmessage}
+tempmessage="broadcast Buh Bye!!  See you in 30 minutes!!"
+${rcon} "${tempmessage}"
