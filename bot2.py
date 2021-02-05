@@ -82,7 +82,7 @@ These commands run elsewhere and are for testing purposes
     # bot server status
     elif message.content.startswith('%status'):
         rc = subprocess.run("/home/ark/scripts/status.sh", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send("__**Test Server Status:**__\n" + rc.stdout + "\n")
+        await message.channel.send("__**Test Server Status:**__\n" + rc.stdout)
 
     # ark force update
     elif message.content.startswith('%force update'):
