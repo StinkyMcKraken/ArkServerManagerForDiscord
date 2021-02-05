@@ -7,7 +7,7 @@
 # check for running instances by checking for lockfiles
 lockfiles=($(find "/home/ark/lgsm/lock" -maxdepth 1 -type f -iname "*.lock" ! -name "*laststart.lock" ! -name "lastupdate.lock" ! -name "backup.lock" -printf "%f\n"))
 
-echo **notification script**
+echo **notifying instances**
 # strip trailing '.lock' from filename
 # and launch notification script for each lockfile/instance found
 # notification scripts should run simultaneously on all active instances
