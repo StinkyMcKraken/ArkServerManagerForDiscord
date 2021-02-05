@@ -97,10 +97,20 @@ These commands run elsewhere and are for testing purposes
         await message.channel.send(rc.stdout + "\n" + rc.stderr + "\nbot.py: Backup, Update, and Restart complete.")
 
     # ark update lgsm
-    elif message.content.startswith('%update lgsm'):
-        await message.channel.send("**:Updating LGSM:**")
-        rc = subprocess.run(["/home/ark/arkserver", "update-lgsm"])
-        await message.channel.send(rc.stdout)
+    elif message.content.startswith('%ul'):
+        output = "__**:Updating LGSM:**__"
+        rcmessage = await message.channel.send(output)
+        rc = subprocess.Popen(["/home/ark/arkserver ul"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+#        await message.channel.send(rc.stdout)
+        # Poll process for new output until finished
+        while True:
+            nextline = rc.stdout.readline()
+            if nextline == '' and rc.poll() is not None:
+                break
+            print(f'{nextline}')  #echo message to console (debug)
+            output = output + nextline
+            await rcmessage.edit(content=output)
+        print(f'\n~~\n{rc.stdout}')
         rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/island"])
         rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/aberration"])
         rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/ragnarok"])
