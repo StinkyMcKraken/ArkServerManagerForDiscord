@@ -338,9 +338,9 @@ updates LGSM itself on all instances. Should not be necessary but may be needed 
             "EEP!",
             "Problem exists between Chair and Keyboard. Please examine and remedy, you dumdum",
             "I know not what this is you speak of",
-            "Crap!"
-            "f*k"
-            "The allure of Black magic is tempting.  It's easy, and fun, like Legos"
+            "Crap!",
+            "f*k",
+            "Bang! Zoom! Straight to the Moon!"
         ]
         response = random.choice(error_quotes)
         await message.channel.send(response)
