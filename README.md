@@ -5,4 +5,4 @@ One issue we keep having is the developer of ARK:Survival Evolved will push clie
 
 We have about 4-6 players on our servers.  Each server is running a different map.  Players typically spend time focused on one map.  Every few months, they switch to a different map.  Tamed creatures on untended servers will die off because Ark continues running its simulation even with no players.  If one or more players want to hop to a map that is not running, it currently requires admin intervention.  I wish to allow players to start and stop servers on their own.
 
-Stopping servers checks via RCON to make sure no players are connected before the server is stopped to prevent trolling.  This feature could be expanded to automatically stop a server if no players have connected in a certain period of time.
+I would like to check via RCON prior to stopping servers to make sure no players are connected before the server is stopped to prevent trolling.  This feature could be expanded to automatically stop a server if no players have connected in a certain period of time. Neither feature has been implemented at this time.
