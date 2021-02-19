@@ -110,6 +110,9 @@ invokes LGSM backup. All running servers are given 10 minute notification, stopp
 **$update lgsm** -
 updates LGSM itself on all instances. Should not be necessary but may be needed if other commands fail. Does not stop servers
 
+**$kick <server> <playersteamid>** -
+sends kick command to <server> to kick <playersteamid>, the numeric identifier supplied after player name in $status
+
 **Use $% to show servers list**
 **Valid <server> at this time**:
 27001 island
