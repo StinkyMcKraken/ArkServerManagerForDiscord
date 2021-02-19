@@ -161,6 +161,17 @@ updates LGSM itself on all instances. Should not be necessary but may be needed 
             message)
         await message.channel.send("__**Backup, Update, and Restart complete.**__")
 
+    # send kick command to given instance
+    # usage: $kick <server> <playerID>
+    elif message.content.startswith('$kick '):
+        kickargs = message.content.split(" ")
+        # test if $kick command was supplied with two arguments
+        if len(kickargs[1]) = 0 or len(kickargs[2]) = 0:
+            await message.channel.send("Usage: $kick <server> <playersteamid>")
+        else
+            rc = subprocess.run(["/home/ark/rcon", kickargs[1], "KickPlayer " + kickargs[2]], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            await message.channel.send(rc.stdout)
+
     # ark update lgsm
     elif message.content.startswith('$update lgsm'):
         await runprocesstodiscord(

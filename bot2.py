@@ -81,7 +81,7 @@ async def on_message(message):    # when a message is received in the channel
     # help command
     elif message.content.startswith('%help'):
         helpmessage = """Help is unlikely
-These %commands run elsewhere and are for testing purposes
+These \%commands run elsewhere and are for testing purposes
 """
         await message.channel.send(helpmessage)
 
@@ -113,6 +113,17 @@ These %commands run elsewhere and are for testing purposes
             "Starting Backup in-game notification script. Please wait 30-40 minutes for backup, update, and restart to complete.\n",
             message)
         await message.channel.send("__**bot2.py: Backup, Update, and Restart complete.**__")
+
+    # send kick command to given instance
+    # usage: %kick <server> <playerID>
+    elif message.content.startswith('%kick '):
+        kickargs = message.content.split(" ")
+        # test if $kick command was supplied with two arguments
+        if len(kickargs[1]) = 0 or len(kickargs[2]) = 0:
+            await message.channel.send("Usage: $kick <server> <playersteamid>")
+        else
+            rc = subprocess.run(["/home/ark/rcon", kickargs[1], "KickPlayer " + kickargs[2]], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            await message.channel.send(rc.stdout)
 
     # ark update lgsm
     elif message.content.startswith('%update lgsm'):
