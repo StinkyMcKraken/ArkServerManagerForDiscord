@@ -150,7 +150,7 @@ These \%commands run elsewhere and are for testing purposes
     # bot server status
     elif message.content.startswith(commandchar + 'status'):
         rc = subprocess.run("/home/ark/scripts/status.sh", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send("__**Test Server Status:**__\n" + rc.stdout)
+        await message.channel.send("__**Test Server Status:**__\n" + escape_ansi(rc.stdout))
 
     # ark force update
     elif message.content.startswith(commandchar + 'force update'):
@@ -175,7 +175,7 @@ These \%commands run elsewhere and are for testing purposes
         # test if $kick command was supplied with two arguments
         if len(args) == 3:
             rc = subprocess.run(["/home/ark/rcon", args[1], "KickPlayer " + args[2]], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-            await message.channel.send(rc.stdout)
+            await message.channel.send(escape_ansi(rc.stdout))
         else:
             await message.channel.send("Usage: " + commandchar + "kick <server> <playersteamid>")
 
@@ -208,7 +208,7 @@ These \%commands run elsewhere and are for testing purposes
                         "__**:Starting " + item + ":**__\n",
                         message)
                 else:
-                    await message.channel.send("__**:Bad Server Name: " + item + ":**__")
+                    await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
         else:
             await returninsult(message)
 
@@ -228,7 +228,7 @@ These \%commands run elsewhere and are for testing purposes
                         "__**:Stopping " + item + ":**__\n",
                         message)
                 else:
-                    await message.channel.send("__**:Bad Server Name: " + item + ":**__")
+                    await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
         else:
             await returninsult(message)
 
@@ -249,7 +249,7 @@ These \%commands run elsewhere and are for testing purposes
                         message)
                 else:
                     # error message
-                    await message.channel.send("__**:Bad Server Name: " + item + ":**__")
+                    await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
         else:
             await returninsult(message)
 

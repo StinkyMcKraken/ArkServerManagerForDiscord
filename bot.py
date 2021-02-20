@@ -59,6 +59,17 @@ serverlist = [
 "arkadmin"
 ]
 
+# Test for valid server name
+def isvalidserver(servername):
+    #iterate through server list
+    for validserver in serverlist:
+        #if valid server name is found, return True
+        if servername == validserver:
+            return True
+    #if no valid name found, return False
+    return False
+
+# Runs given command and feeds it's stdout to Discord in realish time
 async def runprocesstodiscord(cmd, output, message):
     rcmessage = await message.channel.send(output)
     rc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
@@ -68,12 +79,35 @@ async def runprocesstodiscord(cmd, output, message):
         if nextline == '' and rc.poll() is not None:
             break
         #print(f'{nextline}')  #echo message to console (debug)
-        output = output + nextline
+        output = output + escape_ansi(nextline)
         if len(output) > 2000:
             output = nextline
             rcmessage = await message.channel.send(output)
         else:
             await rcmessage.edit(content=output)
+    return
+
+# Error message generator
+async def returninsult(message):
+    error_quotes = [
+        "Krak off, you\'r kiddin\' me!!",
+        "C to K error, please remedy",
+        "EEP!",
+        "Problem exists between Chair and Keyboard. Please examine and remedy, you dumdum",
+        "I know not what this is you speak of",
+        "Crap!",
+        "f*k",
+        "Bang! Zoom! Straight to the Moon!"
+        "Your keyboard must be upside down"
+    ]
+    await message.channel.send(random.choice(error_quotes))
+    return
+
+# Function to remove ANSI sequences from strings
+import re
+def escape_ansi(line):
+    ansi_escape = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
+    return ansi_escape.sub('', line)
 
 @client.event
 async def on_ready():           #when Discord session is ready, echo status to console
@@ -111,13 +145,13 @@ this message
 **$status** -
 lists all running servers and players connected
 
-**$start <server>** -
-you need an explanation ?
+**$start <server> [<server2> <server3> ...]** -
+this is known
 
-**$stop <server>** -
+**$stop <server> [<server2> <server3> ...]** -
 Instant stop, no check for connected players
 
-**$restart <server>** -
+**$restart <server> [<server2> <server3> ...]** -
 stops then starts <server>. Instant stop, no check for players
 
 **$force update** -
@@ -134,17 +168,6 @@ updates LGSM itself on all instances. Should not be necessary but may be needed 
 sends kick command to <server> to kick <playersteamid>, the numeric identifier supplied after player name in $status
 
 **Use $% to show servers list**
-**Valid <server> at this time**:
-27001 island
-27002 aberration
-27003 ragnarok
-27004 scorched
-27005 center
-27006 crystal
-27007 extinction
-27008 valguero
-27009 genesis
-27011 arkadmin (island)
 """
         await message.channel.send(helpmessage)
 
@@ -166,7 +189,7 @@ sends kick command to <server> to kick <playersteamid>, the numeric identifier s
     # bot server status
     elif message.content.startswith(commandchar + 'status'):
         rc = subprocess.run("/home/ark/scripts/status.sh", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
+        await message.channel.send(escape_ansi(rc.stdout))
 
     # ark force update
     elif message.content.startswith(commandchar + 'force update'):
@@ -185,199 +208,93 @@ sends kick command to <server> to kick <playersteamid>, the numeric identifier s
         await message.channel.send("__**Backup, Update, and Restart complete.**__")
 
     # send kick command to given instance
-    # usage: $kick <server> <playerID>
+    # usage: %kick <server> <playerID>
     elif message.content.startswith(commandchar + 'kick'):
-        kickargs = message.content.split(" ")
-        # test if $kick command was supplied with two arguments
-        if len(kickargs) == 3:
-            rc = subprocess.run(["/home/ark/rcon", kickargs[1], "KickPlayer " + kickargs[2]], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-            await message.channel.send(rc.stdout)
-        else
+        args = message.content.split(" ")
+        # test if command was supplied with two arguments
+        if len(args) == 3:
+            rc = subprocess.run(["/home/ark/rcon", args[1], "KickPlayer " + args[2]], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            await message.channel.send(escape_ansi(rc.stdout))
+        else:
             await message.channel.send("Usage: " + commandchar + "kick <server> <playersteamid>")
 
     # ark update lgsm
     elif message.content.startswith(commandchar + 'update lgsm'):
+        # run update lgsm on generic instance
         await runprocesstodiscord(
             "/home/ark/arkserver ul",
             "__**:Updating LGSM:**__\n",
             message)
-        rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/island"])
-        rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/aberration"])
-        rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/ragnarok"])
-        rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/scorched"])
-        rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/center"])
-        rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/crystal"])
-        rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/extinction"])
-        rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/valguero"])
-        rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/genesis"])
-        rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/genesis2"])
-        rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/arkadmin"])
+        # copy generic instance main script to other scripts
+        for instance in serverlist:
+            rc = subprocess.run(["cp", "/home/ark/arkserver", "/home/ark/" + instance])
+        # done
         await message.channel.send("**:LGSM updated on all instances:**")
 
-    # start island server
-    elif message.content.startswith(commandchar + 'start island'):
-        rc = subprocess.run(["/home/ark/island", "start"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
+    # start <server>
+    elif message.content.startswith(commandchar + 'start'):
+        # separate arguments into a list
+        args = message.content.split(" ")
+        # remove first item in list, it is the command given
+        args.pop(0)
+        # test if command was supplied with at least one argument
+        if len(args) >= 1:
+            # loop through provided servernames
+            for item in args:
+                if isvalidserver(item):
+                    await runprocesstodiscord(
+                        "/home/ark/" + item + " start",
+                        "__**:Starting " + item + ":**__\n",
+                        message)
+                else:
+                    await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
+        else:
+            await returninsult(message)
 
-    # stop island server
-    elif message.content.startswith(commandchar + 'stop island'):
-        rc = subprocess.run(["/home/ark/island", "stop"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
+    # stop <server>
+    elif message.content.startswith(commandchar + 'stop'):
+        # separate arguments into a list
+        args = message.content.split(" ")
+        # remove first item in list, it is the command given
+        args.pop(0)
+        # test if command was supplied with at least one argument
+        if len(args) >= 1:
+            # loop through provided servernames
+            for item in args:
+                if isvalidserver(item):
+                    await runprocesstodiscord(
+                        ["/home/ark/" + item + " stop"],
+                        "__**:Stopping " + item + ":**__\n",
+                        message)
+                else:
+                    await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
+        else:
+            await returninsult(message)
 
-    # restart island Server
-    elif message.content.startswith(commandchar + 'restart island'):
-        rc = subprocess.run(["/home/ark/island", "restart"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # start aberration server
-    elif message.content.startswith(commandchar + 'start aberration'):
-        rc = subprocess.run(["/home/ark/aberration", "start"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # stop aberration server
-    elif message.content.startswith(commandchar + 'stop aberration'):
-        rc = subprocess.run(["/home/ark/aberration", "stop"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # restart aberration Server
-    elif message.content.startswith(commandchar + 'restart aberration'):
-        rc = subprocess.run(["/home/ark/aberration", "restart"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # start ragnarok server
-    elif message.content.startswith(commandchar + 'start ragnarok'):
-        rc = subprocess.run(["/home/ark/ragnarok", "start"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # stop ragnarok server
-    elif message.content.startswith(commandchar + 'stop ragnarok'):
-        rc = subprocess.run(["/home/ark/ragnarok", "stop"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # restart ragnarok Server
-    elif message.content.startswith(commandchar + 'restart ragnarok'):
-        rc = subprocess.run(["/home/ark/ragnarok", "restart"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # start scorched earth server
-    elif message.content.startswith(commandchar + 'start scorched'):
-        rc = subprocess.run(["/home/ark/scorched", "start"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # stop scorched earth server
-    elif message.content.startswith(commandchar + 'stop scorched'):
-        rc = subprocess.run(["/home/ark/scorched", "stop"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # restart scorched earth Server
-    elif message.content.startswith(commandchar + 'restart scorched'):
-        rc = subprocess.run(["/home/ark/scorched", "restart"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # start the center server
-    elif message.content.startswith(commandchar + 'start center'):
-        rc = subprocess.run(["/home/ark/center", "start"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # stop the center server
-    elif message.content.startswith(commandchar + 'stop center'):
-        rc = subprocess.run(["/home/ark/center", "stop"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # restart the center Server
-    elif message.content.startswith(commandchar + 'restart center'):
-        rc = subprocess.run(["/home/ark/center", "restart"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # start crystal isles server
-    elif message.content.startswith(commandchar + 'start crystal'):
-        rc = subprocess.run(["/home/ark/crystal", "start"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # stop crystal isles server
-    elif message.content.startswith(commandchar + 'stop crystal'):
-        rc = subprocess.run(["/home/ark/crystal", "stop"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # restart crystal isles Server
-    elif message.content.startswith(commandchar + 'restart crystal'):
-        rc = subprocess.run(["/home/ark/crystal", "restart"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # start extinction server
-    elif message.content.startswith(commandchar + 'start extinction'):
-        rc = subprocess.run(["/home/ark/extinction", "start"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # stop extinction server
-    elif message.content.startswith(commandchar + 'stop extinction'):
-        rc = subprocess.run(["/home/ark/extinction", "stop"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # restart extinction Server
-    elif message.content.startswith(commandchar + 'restart extinction'):
-        rc = subprocess.run(["/home/ark/extinction", "restart"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # start valguero server
-    elif message.content.startswith(commandchar + 'start valguero'):
-        rc = subprocess.run(["/home/ark/valguero", "start"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # stop valguero server
-    elif message.content.startswith(commandchar + 'stop valguero'):
-        rc = subprocess.run(["/home/ark/valguero", "stop"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # restart valguero Server
-    elif message.content.startswith(commandchar + 'restart valguero'):
-        rc = subprocess.run(["/home/ark/valguero", "restart"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # start genesis server
-    elif message.content.startswith(commandchar + 'start genesis'):
-        rc = subprocess.run(["/home/ark/genesis", "start"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # stop genesis server
-    elif message.content.startswith(commandchar + 'stop genesis'):
-        rc = subprocess.run(["/home/ark/genesis", "stop"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # restart genesis Server
-    elif message.content.startswith(commandchar + 'restart genesis'):
-        rc = subprocess.run(["/home/ark/genesis", "restart"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # start arkadmin server
-    elif message.content.startswith(commandchar + 'start arkadmin'):
-        rc = subprocess.run(["/home/ark/arkadmin", "start"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # stop arkadmin server
-    elif message.content.startswith(commandchar + 'stop arkadmin'):
-        rc = subprocess.run(["/home/ark/arkadmin", "stop"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
-
-    # restart arkadmin Server
-    elif message.content.startswith(commandchar + 'restart arkadmin'):
-        rc = subprocess.run(["/home/ark/arkadmin", "restart"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(rc.stdout)
+    # restart <server>
+    elif message.content.startswith(commandchar + 'restart'):
+        # separate arguments into a list
+        args = message.content.split(" ")
+        # remove first item in list, it is the command given
+        args.pop(0)
+        # test if command was supplied with at least one argument
+        if len(args) >= 1:
+            # loop through provided servernames
+            for item in args:
+                if isvalidserver(item):
+                    await runprocesstodiscord(
+                        ["/home/ark/" + item + " restart"],
+                        "__**:Restarting " + item + ":**__\n",
+                        message)
+                else:
+                    # error message
+                    await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
+        else:
+            await returninsult(message)
 
     # unknown command, return random error message
     else:
-        error_quotes = [
-            "Krak off, you\'r kiddin\' me!!",
-            "C to K error, please remedy",
-            "EEP!",
-            "Problem exists between Chair and Keyboard. Please examine and remedy, you dumdum",
-            "I know not what this is you speak of",
-            "Crap!",
-            "f*k",
-            "Bang! Zoom! Straight to the Moon!"
-        ]
-        response = random.choice(error_quotes)
-        await message.channel.send(response)
+        await returninsult(message)
 
     #print(f'{message.author}:::{message.content}')  #echo message to console (debug)
 
