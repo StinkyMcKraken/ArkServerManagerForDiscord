@@ -55,7 +55,7 @@ serverlist = [
 "crystal",
 "extinction",
 "valguero",
-"genesis"
+"genesis",
 "arkadmin"
 ]
 

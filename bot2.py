@@ -57,7 +57,7 @@ serverlist = [
 "crystal",
 "extinction",
 "valguero",
-"genesis"
+"genesis",
 "arkadmin"
 ]
 
@@ -146,6 +146,25 @@ These \%commands run elsewhere and are for testing purposes
         await tempmessage.edit(content="onetwo")
         await asyncio.sleep(10)
         await tempmessage.edit(content="one\ntwo\nthree")
+
+    # Test the thing
+    elif message.content.startswith(commandchar + 'testserver'):
+        tempmessage = "testing\n"
+        # separate arguments into a list
+        args = message.content.split(" ")
+        # remove first item in list, it is the command given
+        args.pop(0)
+        # test if command was supplied with at least one argument
+        if len(args) >= 1:
+            # loop through provided servernames
+            for item in args:
+                if isvalidserver(item):
+                    tempmessage = tempmessage + item + " True\n"
+                else:
+                    tempmessage = tempmessage + item + " False\n"
+            await message.channel.send(tempmessage)
+        else:
+            await returninsult(message)
 
     # bot server status
     elif message.content.startswith(commandchar + 'status'):
