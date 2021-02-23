@@ -97,7 +97,7 @@ async def returninsult(message):
         "I know not what this is you speak of",
         "Crap!",
         "f*k",
-        "Bang! Zoom! Straight to the Moon!"
+        "Bang! Zoom! Straight to the Moon!",
         "Your keyboard must be upside down"
     ]
     await message.channel.send(random.choice(error_quotes))
