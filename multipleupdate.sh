@@ -24,7 +24,8 @@ wait
 echo **stopping instances**
 for instance in ${lockfiles[@]}
 do
-  /home/ark/${instance} stop &
+  /home/ark/${instance} stop
+  echo ${instance} stopped
 done
 #wait for all instances to stop gracefully
 wait
@@ -32,10 +33,11 @@ wait
 # update lgsm on all instances
 # this update should run sequentially on each instance instead of simultaneously
 echo **updating lgsm**
-for instance in ${lockfiles[@]}
-do
-  /home/ark/${instance} update-lgsm
-done
+/home/ark/scripts/updatelgsm.sh
+#for instance in ${lockfiles[@]}
+#do
+#  /home/ark/${instance} update-lgsm
+#done
 
 # force update server binary since the regular update does not always
 # pick up minor updates
@@ -47,7 +49,8 @@ echo **updating server**
 echo **restarting instances**
 for instance in ${lockfiles[@]}
 do
-  /home/ark/${instance} start &
+  /home/ark/${instance} start
+  echo ${instance} started
 done
 # wait for instance start scripts to complete
 wait

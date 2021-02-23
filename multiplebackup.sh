@@ -24,7 +24,8 @@ wait
 echo **stopping instances**
 for instance in ${lockfiles[@]}
 do
-  /home/ark/${instance} stop &
+  /home/ark/${instance} stop
+  echo ${instance} stopped
 done
 # wait for all instances to stop gracefully
 wait
@@ -32,10 +33,11 @@ wait
 # update lgsm on all instances
 # this command should run sequentially on each instance instead of simultaneously
 echo **updating lgsm**
-for instance in ${lockfiles[@]}
-do
-  /home/ark/${instance} update-lgsm
-done
+/home/ark/scripts/updatelgsm.sh
+#for instance in ${lockfiles[@]}
+#do
+#  /home/ark/${instance} update-lgsm
+#done
 
 # run backup on generic instance. we are running instances,
 # backing up one instance will backup entire home directory including
@@ -54,7 +56,8 @@ echo **updating server**
 echo **restarting instances**
 for instance in ${lockfiles[@]}
 do
-  /home/ark/${instance} start &
+  /home/ark/${instance} start
+  echo ${instance} started
 done
 # wait for instance start scripts to complete
 wait
