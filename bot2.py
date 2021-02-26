@@ -272,7 +272,7 @@ Move along.
     elif message.content.startswith(commandchar + 'kickme'):
         # check author against database
         try:
-            kickmesteamid = userdata[str(message.author.id)]['steamid']
+            kickmesteamid = str(userdata[str(message.author.id)]['steamid'])
         except KeyError:
             # if author not in database, respond with kickmeregister usage
             await message.channel.send("You are not registered. Use " + commandchar + "kickmeregister <SteamID> to register yourself in " + commandchar + "kickme")
@@ -284,14 +284,14 @@ Move along.
         kickservers = []
         servername = ''
         for row in reader:
-            name = row['playername']
+            name = str(row['playername'])
             if name.startswith('**'):
                 # parse servername, since they start and end with '**'
                 servername = name.lstrip("*").rstrip("*")
             else:
                 # locate steamid in the list
-                steamid = row['steamid']
-                if (str(steamid) == str(kickmesteamid)):
+                steamid = str(row['steamid']).lstrip(" ").rstrip(" ")
+                if (steamid == kickmesteamid):
                     # add servername to list of servers where kicking should ensue
                     kickservers.append(servername)
                     # capture playername. using split() to separate out the leading number
