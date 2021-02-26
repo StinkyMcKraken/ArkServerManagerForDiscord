@@ -254,7 +254,12 @@ Move along.
                 # display usage
                 await message.channel.send("You are not registered. Use " + commandchar + "kickmeregister <SteamID> to register yourself in " + commandchar + "kickme. Your <steamid> is the number listed after your name in " + commandchar + "status")
                 return
-            # if argument, add user to database
+            # if argument, check to see if steamid is already registered
+            for player in userdata:
+                if args[0] == userdata[player]['steamid']:
+                    await message.channel.send("SteamID " + args[0] + " already registered to " + userdata[player]['name'])
+                    return
+            # add user to database
             userdata[userid] = {
                 'steamid' : args[0],
                 'name' : username  # including Discord Username so I can manually delete people out of the json file
