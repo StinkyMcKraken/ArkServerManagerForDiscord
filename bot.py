@@ -110,7 +110,7 @@ async def returninsult(message):
         "Krak off, you\'r kiddin\' me!!",
         "C to K error, please remedy",
         "EEP!",
-        "Problem exists between Chair and Keyboard. Please examine and remedy, you dumdum",
+#        "Problem exists between Chair and Keyboard. Please examine and remedy, you dumdum",
         "I know not what this is you speak of",
         "Crap!",
         "f*k",
@@ -120,7 +120,10 @@ async def returninsult(message):
         "I canna' do it cap'm, we need more pow'a",
         "I cannot tell a lie.  You, sir, need to. fuck. off.",
         "All your base are belong to me",
-        "Hello. My name is Inigo Montoya. You killed my father. Prepare to die."
+        "Hello. My name is Inigo Montoya. You killed my father. Prepare to die.",
+        "Bad monkey, no juicebox for you!",
+        "Perhaps you could do better if I got you a BahNahNah",
+        "Hey Joe, when you're done masturbating, maybe we could get some work done"
     ]
     await message.channel.send(random.choice(error_quotes))
     return
