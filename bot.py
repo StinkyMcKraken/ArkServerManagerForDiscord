@@ -73,7 +73,8 @@ serverlist = [
 "extinction",
 "valguero",
 "genesis",
-"arkadmin"
+"arkadmin",
+"arkserver"
 ]
 
 # Test for valid server name
@@ -266,7 +267,7 @@ to change your registered <steamid>, ping the bot man (StinkyMcKraken)
             "/home/ark/scripts/multipleupdate.sh",
             "Starting Forced Update in-game notification script. Please wait 15 minutes for update and restart to complete.\n",
             message)
-        await message.channel.send("__**bot2.py: Update and Restart complete.**__")
+        await message.channel.send("__**bot.py: Update and Restart complete.**__")
 
     # ark backup
     elif message.content.startswith(commandchar + 'backup'):
@@ -277,7 +278,7 @@ to change your registered <steamid>, ping the bot man (StinkyMcKraken)
             "/home/ark/scripts/multiplebackup.sh",
             "Starting Backup in-game notification script. Please wait 30-40 minutes for backup, update, and restart to complete.\n",
             message)
-        await message.channel.send("__**bot2.py: Backup, Update, and Restart complete.**__")
+        await message.channel.send("__**bot.py: Backup, Update, and Restart complete.**__")
 
     # kickmeregister command, one argument, steamid
     # this command must be listed before kickme and kick
