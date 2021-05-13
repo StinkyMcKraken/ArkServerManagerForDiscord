@@ -73,6 +73,7 @@ serverlist = [
 "extinction",
 "valguero",
 "genesis",
+"genesis2",
 "arkadmin",
 "arkserver"
 ]
@@ -249,6 +250,7 @@ to change your registered <steamid>, ping the bot man (StinkyMcKraken)
 27007 extinction
 27008 valguero
 27009 genesis
+27010 genesis2
 27011 arkadmin (island)
 """
         await message.channel.send(helpmessage)
