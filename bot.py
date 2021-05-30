@@ -196,7 +196,10 @@ Instant stop, no check for connected players
 **$restart <server> [<server2> <server3> ...]** -
 stops then starts <server>. Instant stop, no check for players
 
-**$force update** -
+**$check**
+runs LGSM check for update and shows the results
+
+**$force** -
 invokes LGSM forced update. All running servers are given 10 minute notification, stopped, updated, and restarted.
 *Cheat mode*: if you manually stop all running servers prior to running this command, it will skip the 10 minute notification process. Servers will need to be manually restarted after the update.
 
@@ -226,6 +229,9 @@ this message
 
 **$status** -
 lists all running servers and players connected
+
+**$check**
+runs LGSM check for update and shows the results
 
 **$kickme**
 sends kick command to whatever server(s) you are connected to. you must register your steamid with $kickmeregister. steamid visible in $status when connected to ark cluster
@@ -260,8 +266,16 @@ to change your registered <steamid>, ping the bot man (StinkyMcKraken)
         rc = subprocess.run("/home/ark/scripts/status.sh", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         await message.channel.send(escape_ansi(rc.stdout))
 
+    # LGSM Check for update
+    elif message.content.startswith(commandchar + 'check'):
+        # run command
+        await runprocesstodiscord(
+            "/home/ark/arkserver check-update",
+            "bot.py: Checking for Update...\n",
+            message)
+
     # ark force update
-    elif message.content.startswith(commandchar + 'force update'):
+    elif message.content.startswith(commandchar + 'force'):
         # command channel check
         if message.guild.id != COMMAND_CHANNEL: return
         # run command
