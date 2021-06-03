@@ -125,7 +125,11 @@ async def returninsult(message):
         "Hello. My name is Inigo Montoya. You killed my father. Prepare to die.",
         "Bad monkey, no juicebox for you!",
         "Perhaps you could do better if I got you a BahNahNah",
-        "Hey Joe, when you're done masturbating, maybe we could get some work done"
+        "Hey Joe, when you're done masturbating, maybe we could get some work done",
+        "Nope",
+        "Try Again",
+        "Dangit!",
+        "Get it together you overgrown beer can!"
     ]
     await message.channel.send(random.choice(error_quotes))
     return
