@@ -80,12 +80,12 @@ serverlist = [
 
 # Test for valid server name
 def isvalidserver(servername):
-    #iterate through server list
+    # iterate through server list
     for validserver in serverlist:
-        #if valid server name is found, return True
+        # if valid server name is found, return True
         if servername == validserver:
             return True
-    #if no valid name found, return False
+    # if no valid name found, return False
     return False
 
 # Runs given command and feeds it's stdout to Discord in realish time
@@ -97,7 +97,6 @@ async def runprocesstodiscord(cmd, output, message):
         nextline = rc.stdout.readline()
         if nextline == '' and rc.poll() is not None:
             break
-        #print(f'{nextline}')  #echo message to console (debug)
         output = output + escape_ansi(nextline)
         if len(output) > 2000:
             output = nextline
@@ -129,7 +128,8 @@ async def returninsult(message):
         "Nope",
         "Try Again",
         "Dangit!",
-        "Get it together you overgrown beer can!"
+        "Get it together you overgrown beer can!",
+        "~~Sigh"
     ]
     await message.channel.send(random.choice(error_quotes))
     return
@@ -145,7 +145,7 @@ def writejson(data):
     with open(jsonfilename, 'w') as json_file:
         json.dump(data, json_file, indent=2)
 
-#when Discord session is ready, echo status to console
+# when Discord session is ready, echo status to console
 @client.event
 async def on_ready():
     print(
@@ -483,6 +483,7 @@ to change your registered <steamid>, ping the bot man (StinkyMcKraken)
         if message.guild.id != COMMAND_CHANNEL: return
         await returninsult(message)
 
-    #print(f'{message.author}:::{message.content}')  #echo message to console (debug)
 
-client.run(TOKEN)       #actually start the Discord session
+
+# actually start the Discord session
+client.run(TOKEN)
