@@ -1,5 +1,7 @@
 import csv
 
+# https://www.w3schools.com/python/trypython.asp?filename=demo_default
+
 data = """**aberration**
 
 0. Clockwork_Kitten, 76561198898721578
