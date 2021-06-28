@@ -2,7 +2,8 @@ import csv
 
 # https://www.w3schools.com/python/trypython.asp?filename=demo_default
 
-data = """**aberration**
+def myfunction():
+    data = """**aberration**
 
 0. Clockwork_Kitten, 76561198898721578
 1. Rogue Kraken, 76561198393377424
@@ -23,38 +24,45 @@ Error 111: Connection refused
 
 """
 
-kickmesteamid = '76561198393377424'
+    kickmesteamid = '76561198393377424'
 
-reader = csv.DictReader(data.splitlines(), delimiter=',', skipinitialspace=True, fieldnames = ['playername', 'steamid'])
+    reader = csv.DictReader(data.splitlines(), delimiter=',', skipinitialspace=True, fieldnames = ['playername', 'steamid'])
 
-# print playername
-#print('PlayerName')
-#for row in reader:
-#    print("PN: " + str(row['playername']) + " SID: " + str(row['steamid']))
+    # print playername
+    #print('PlayerName')
+    #for row in reader:
+    #    print("PN: " + str(row['playername']) + " SID: " + str(row['steamid']))
 
-# print steamid ## Note, can only iterate through reader once, which is why i had to display steamid above
-#print('\nSteamID')
-#for row in reader:
-#    print(row['steamid'])
+    # print steamid ## Note, can only iterate through reader once, which is why i had to display steamid above
+    #print('\nSteamID')
+    #for row in reader:
+    #    print(row['steamid'])
 
-#initialize tracking variables
-vacant = set(())
-occupied = set(())
-servername = ''
-for row in reader:
-    print("PN: " + str(row['playername']) + " SID: " + str(row['steamid']))
-    name = row['playername']
-    if name.startswith('**'):
-        # parse servername, since they start and end with '**'
-        servername = name.lstrip("*").rstrip("*")
-        print(servername)
-    elif ((name == "No Players Connected") or (name == "Connection failed.") or (name == "Error 111: Connection refused")):
-        # check for no players connected, add server to vacant set
-        vacant.add(servername)
-    else:
-        # otherwise, assume playername is listed, add server to occupied set
-        occupied.add(servername)
+    #initialize tracking variables
+    servers = { "init": "value", }
+    servers['vacant'] = set(())
+    servers['occupied'] = set(())
+    servername = ''
+    for row in reader:
+        print("PN: " + str(row['playername']) + " SID: " + str(row['steamid']))
+        name = row['playername']
+        if name.startswith('**'):
+            # parse servername, since they start and end with '**'
+            servername = name.lstrip("*").rstrip("*")
+            print(servername)
+        elif ((name == "No Players Connected") or (name == "Connection failed.") or (name == "Error 111: Connection refused")):
+            # check for no players connected, add server to vacant set
+            servers['vacant'].add(servername)
+        else:
+            # otherwise, assume playername is listed, add server to occupied set
+            servers['occupied'].add(servername)
+    return servers
 
-print("\nLength of Occupied: " + str(len(occupied)))
+mydict = myfunction()
 
-print('\nLength of Vacant: ' + str(len(vacant)))
+print(mydict)
+print("\nLength of Occupied: " + str(len(mydict['occupied'])))
+print(mydict['occupied'])
+
+print('\nLength of Vacant: ' + str(len(mydict['vacant'])))
+print(mydict['vacant'])

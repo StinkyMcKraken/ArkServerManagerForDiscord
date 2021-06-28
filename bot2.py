@@ -74,7 +74,9 @@ serverlist = [
 "extinction",
 "valguero",
 "genesis",
-"arkadmin"
+"genesis2",
+"arkadmin",
+"arkserver"
 ]
 
 # Test for valid server name
@@ -111,7 +113,7 @@ async def returninsult(message):
         "Krak off, you\'r kiddin\' me!!",
         "C to K error, please remedy",
         "EEP!",
-        "Problem exists between Chair and Keyboard. Please examine and remedy, you dumdum",
+#        "Problem exists between Chair and Keyboard. Please examine and remedy, you dumdum",
         "I know not what this is you speak of",
         "Crap!",
         "f*k",
@@ -121,7 +123,15 @@ async def returninsult(message):
         "I canna' do it cap'm, we need more pow'a",
         "I cannot tell a lie.  You, sir, need to. fuck. off.",
         "All your base are belong to me",
-        "Hello. My name is Inigo Montoya. You killed my father. Prepare to die."
+        "Hello. My name is Inigo Montoya. You killed my father. Prepare to die.",
+        "Bad monkey, no juicebox for you!",
+        "Perhaps you could do better if I got you a BahNahNah",
+        "Hey Joe, when you're done showering, maybe we could get some work done",
+        "Nope",
+        "Try Again",
+        "Dangit!",
+        "Get it together you overgrown beer can!",
+        "~~Sigh"
     ]
     await message.channel.send(random.choice(error_quotes))
     return
@@ -136,6 +146,58 @@ def escape_ansi(line):
 def writejson(data):
     with open(jsonfilename, 'w') as json_file:
         json.dump(data, json_file, indent=2)
+
+# Function to check if any players are connected to any instances
+# Returns dict of server names sorted by vacant or occupied
+def anybodyhome():
+    # get server status
+    rc = subprocess.run("/home/ark/scripts/status.sh", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    reader = csv.DictReader(rc.stdout.splitlines(), delimiter=',', skipinitialspace=True, fieldnames = ['playername', 'steamid'])
+    #initialize tracking variables
+    servers = { "init": "value", }
+    servers['vacant'] = set(())
+    servers['occupied'] = set(())
+    servername = ''
+    # scan returned status data
+    for row in reader:
+        name = str(row['playername'])
+        if name.startswith('**'):
+            # parse servername, since they start and end with '**'
+            servername = name.lstrip("*").rstrip("*")
+        elif ((name == "No Players Connected ") or (name == "Connection failed.") or (name == "Error 111: Connection refused") or (name == "")):
+            # check for no players connected, add server to vacant set
+            servers['vacant'].add(servername)
+        else:
+            # otherwise, assume playername is listed, add server to occupied set
+            servers['occupied'].add(servername)
+    return servers
+
+# Function to start set of Servers
+async def startservers(args, message):
+    # loop through provided servernames
+    for item in args:
+        # check if servername is valid
+        if isvalidserver(item):
+            await runprocesstodiscord(
+                "/home/ark/" + item + " start",
+                "__**:Starting " + item + ":**__\n",
+                message)
+        else:
+            # Report invalid servername
+            await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
+
+# Function to stop set of servers
+async def stopservers(args, message):
+    # loop through provided servernames
+    for item in args:
+        if isvalidserver(item):
+            await runprocesstodiscord(
+                ["/home/ark/" + item + " stop"],
+                "__**:Stopping " + item + ":**__\n",
+                message)
+        else:
+            # report invalid servername
+            await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
 
 #when Discord session is ready, echo status to console
 @client.event
@@ -213,25 +275,55 @@ Move along.
         await message.channel.send("__**Test Server Status:**__\n" + escape_ansi(rc.stdout))
 
     # ark force update
-    elif message.content.startswith(commandchar + 'force update'):
+    elif message.content.startswith(commandchar + 'force'):
         # command channel check
         if message.guild.id != COMMAND_CHANNEL: return
-        # run command
-        await runprocesstodiscord(
-            "/home/ark/scripts/multipleupdate.sh",
-            "Starting Forced Update in-game notification script. Please wait 15 minutes for update and restart to complete.\n",
-            message)
+        # check if any servers are occupied
+        servers = anybodyhome()
+        if (len(servers['occupied']) == 0):
+            # if no occupied servers, stop all servers
+            await message.channel.send("**No Players Connected to servers**")
+            await stopservers(servers['vacant'], message)
+            # run force update command script
+            await runprocesstodiscord(
+                "/home/ark/scripts/multipleupdate.sh",
+                "Starting Forced Update. Please wait 5-8 minutes for update to complete.\n",
+                message)
+            # restart servers that were stopped
+            await startservers(servers['vacant'], message)
+        else:
+            # else some servers are occupied, let the script send notifications
+            # run command
+            await runprocesstodiscord(
+                "/home/ark/scripts/multipleupdate.sh",
+                "Starting Forced Update in-game notification script. Please wait 15 minutes for update and restart to complete.\n",
+                message)
         await message.channel.send("__**bot2.py: Update and Restart complete.**__")
 
     # ark backup
     elif message.content.startswith(commandchar + 'backup'):
         # command channel check
         if message.guild.id != COMMAND_CHANNEL: return
-        # run command
-        await runprocesstodiscord(
-            "/home/ark/scripts/multiplebackup.sh",
-            "Starting Backup in-game notification script. Please wait 30-40 minutes for backup, update, and restart to complete.\n",
-            message)
+        # check if any servers are occupied
+        servers = anybodyhome()
+        if (len(servers['occupied']) == 0):
+            # if no occupied servers, stop all servers
+            await message.channel.send("**No Players Connected to servers**")
+            await stopservers(servers['vacant'], message)
+            # run force update command script
+            await runprocesstodiscord(
+                "/home/ark/scripts/multiplebackup.sh",
+                "Starting Forced Update. Please wait 25 minutes for backup to complete.\nServers will be restarted automatically.\n",
+                message)
+            # restart servers that were stopped
+            await startservers(servers['vacant'], message)
+        else:
+            # else some servers are occupied, let the script send notifications
+            # run command
+            await runprocesstodiscord(
+                "/home/ark/scripts/multiplebackup.sh",
+                "Starting Backup in-game notification script. Please wait 30-40 minutes for backup, update, and restart to complete.\n",
+                message)
         await message.channel.send("__**bot2.py: Backup, Update, and Restart complete.**__")
 
     # kickmeregister command, one argument, steamid
@@ -344,7 +436,7 @@ Move along.
         # done
         await message.channel.send("**:LGSM updated on all instances:**")
 
-    # start <server>
+    # start <server> [<server> <server> ...]
     elif message.content.startswith(commandchar + 'start'):
         # command channel check
         if message.guild.id != COMMAND_CHANNEL: return
@@ -354,19 +446,11 @@ Move along.
         args.pop(0)
         # test if command was supplied with at least one argument
         if len(args) >= 1:
-            # loop through provided servernames
-            for item in args:
-                if isvalidserver(item):
-                    await runprocesstodiscord(
-                        "/home/ark/" + item + " start",
-                        "__**:Starting " + item + ":**__\n",
-                        message)
-                else:
-                    await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
+            await startservers(args, message)
         else:
             await returninsult(message)
 
-    # stop <server>
+    # stop <server> [<server> <server> ...]
     elif message.content.startswith(commandchar + 'stop'):
         # command channel check
         if message.guild.id != COMMAND_CHANNEL: return
@@ -376,19 +460,13 @@ Move along.
         args.pop(0)
         # test if command was supplied with at least one argument
         if len(args) >= 1:
-            # loop through provided servernames
-            for item in args:
-                if isvalidserver(item):
-                    await runprocesstodiscord(
-                        ["/home/ark/" + item + " stop"],
-                        "__**:Stopping " + item + ":**__\n",
-                        message)
-                else:
-                    await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
+            # handoff to function used by other commands
+            await stopservers(args, message)
         else:
+            # Report invalid syntax
             await returninsult(message)
 
-    # restart <server>
+    # restart <server> [<server> <server> ...]
     elif message.content.startswith(commandchar + 'restart'):
         # command channel check
         if message.guild.id != COMMAND_CHANNEL: return
@@ -409,6 +487,7 @@ Move along.
                     # error message
                     await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
         else:
+            # report invalid syntax
             await returninsult(message)
 
     # unknown command, return random error message
@@ -417,6 +496,5 @@ Move along.
         if message.guild.id != COMMAND_CHANNEL: return
         await returninsult(message)
 
-    #print(f'{message.author}:::{message.content}')  #echo message to console (debug)
-
-client.run(TOKEN)       #actually start the Discord session
+# actually start the Discord session
+client.run(TOKEN)

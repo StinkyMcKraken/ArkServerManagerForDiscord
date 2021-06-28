@@ -124,7 +124,7 @@ async def returninsult(message):
         "Hello. My name is Inigo Montoya. You killed my father. Prepare to die.",
         "Bad monkey, no juicebox for you!",
         "Perhaps you could do better if I got you a BahNahNah",
-        "Hey Joe, when you're done masturbating, maybe we could get some work done",
+        "Hey Joe, when you're done showering, maybe we could get some work done",
         "Nope",
         "Try Again",
         "Dangit!",
@@ -144,6 +144,58 @@ def escape_ansi(line):
 def writejson(data):
     with open(jsonfilename, 'w') as json_file:
         json.dump(data, json_file, indent=2)
+
+# Function to check if any players are connected to any instances
+# Returns dict of server names sorted by vacant or occupied
+def anybodyhome():
+    # get server status
+    rc = subprocess.run("/home/ark/scripts/status.sh", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    reader = csv.DictReader(rc.stdout.splitlines(), delimiter=',', skipinitialspace=True, fieldnames = ['playername', 'steamid'])
+    #initialize tracking variables
+    servers = { "init": "value", }
+    servers['vacant'] = set(())
+    servers['occupied'] = set(())
+    servername = ''
+    # scan returned status data
+    for row in reader:
+        name = str(row['playername'])
+        if name.startswith('**'):
+            # parse servername, since they start and end with '**'
+            servername = name.lstrip("*").rstrip("*")
+        elif ((name == "No Players Connected ") or (name == "Connection failed.") or (name == "Error 111: Connection refused") or (name == "")):
+            # check for no players connected, add server to vacant set
+            servers['vacant'].add(servername)
+        else:
+            # otherwise, assume playername is listed, add server to occupied set
+            servers['occupied'].add(servername)
+    return servers
+
+# Function to start set of Servers
+async def startservers(args, message):
+    # loop through provided servernames
+    for item in args:
+        # check if servername is valid
+        if isvalidserver(item):
+            await runprocesstodiscord(
+                "/home/ark/" + item + " start",
+                "__**:Starting " + item + ":**__\n",
+                message)
+        else:
+            # Report invalid servername
+            await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
+
+# Function to stop set of servers
+async def stopservers(args, message):
+    # loop through provided servernames
+    for item in args:
+        if isvalidserver(item):
+            await runprocesstodiscord(
+                ["/home/ark/" + item + " stop"],
+                "__**:Stopping " + item + ":**__\n",
+                message)
+        else:
+            # report invalid servername
+            await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
 
 # when Discord session is ready, echo status to console
 @client.event
@@ -201,17 +253,14 @@ Instant stop, no check for connected players
 stops then starts <server>. Instant stop, no check for players
 
 **$check**
-runs LGSM check for update and shows the results
+checks if an update is available
 
 **$force** -
 invokes LGSM forced update. All running servers are given 10 minute notification, stopped, updated, and restarted.
-*Cheat mode*: if you manually stop all running servers prior to running this command, it will skip the 10 minute notification process. Servers will need to be manually restarted after the update.
+*Cheat mode*: if you invoke $force when no players are connected, servers are stopped and restarted automatically and the 10 minute notification is bypassed.
 
 **$backup** -
-invokes LGSM backup. All running servers are given 10 minute notification, stopped, backedup, updated, and restarted. Same cheat as $force update
-
-**$update lgsm** -
-updates LGSM itself on all instances. Should not be necessary but may be needed if other commands fail. Does not stop servers
+invokes LGSM backup. All running servers are given 10 minute notification, stopped, backedup, updated, and restarted. Same cheat as $force
 
 **$kick <server> <playersteamid>** -
 sends kick command to <server> to kick <playersteamid>, the numeric identifier supplied after player name in $status
@@ -235,7 +284,7 @@ this message
 lists all running servers and players connected
 
 **$check**
-runs LGSM check for update and shows the results
+checks for avaliable update
 
 **$kickme**
 sends kick command to whatever server(s) you are connected to. you must register your steamid with $kickmeregister. steamid visible in $status when connected to ark cluster
@@ -282,22 +331,52 @@ to change your registered <steamid>, ping the bot man (StinkyMcKraken)
     elif message.content.startswith(commandchar + 'force'):
         # command channel check
         if message.guild.id != COMMAND_CHANNEL: return
-        # run command
-        await runprocesstodiscord(
-            "/home/ark/scripts/multipleupdate.sh",
-            "Starting Forced Update in-game notification script. Please wait 15 minutes for update and restart to complete.\n",
-            message)
+        # check if any servers are occupied
+        servers = anybodyhome()
+        if (len(servers['occupied']) == 0):
+            # if no occupied servers, stop all servers
+            await message.channel.send("**No Players Connected to servers**")
+            await stopservers(servers['vacant'], message)
+            # run force update command script
+            await runprocesstodiscord(
+                "/home/ark/scripts/multipleupdate.sh",
+                "Starting Forced Update. Please wait 5-8 minutes for update to complete.\n",
+                message)
+            # restart servers that were stopped
+            await startservers(servers['vacant'], message)
+        else:
+            # else some servers are occupied, let the script send notifications
+            # run command
+            await runprocesstodiscord(
+                "/home/ark/scripts/multipleupdate.sh",
+                "Starting Forced Update in-game notification script. Please wait 15 minutes for update and restart to complete.\n",
+                message)
         await message.channel.send("__**bot.py: Update and Restart complete.**__")
 
     # ark backup
     elif message.content.startswith(commandchar + 'backup'):
         # command channel check
         if message.guild.id != COMMAND_CHANNEL: return
-        # run command
-        await runprocesstodiscord(
-            "/home/ark/scripts/multiplebackup.sh",
-            "Starting Backup in-game notification script. Please wait 30-40 minutes for backup, update, and restart to complete.\n",
-            message)
+        # check if any servers are occupied
+        servers = anybodyhome()
+        if (len(servers['occupied']) == 0):
+            # if no occupied servers, stop all servers
+            await message.channel.send("**No Players Connected to servers**")
+            await stopservers(servers['vacant'], message)
+            # run force update command script
+            await runprocesstodiscord(
+                "/home/ark/scripts/multiplebackup.sh",
+                "Starting Forced Update. Please wait 25 minutes for backup to complete.\nServers will be restarted automatically.\n",
+                message)
+            # restart servers that were stopped
+            await startservers(servers['vacant'], message)
+        else:
+            # else some servers are occupied, let the script send notifications
+            # run command
+            await runprocesstodiscord(
+                "/home/ark/scripts/multiplebackup.sh",
+                "Starting Backup in-game notification script. Please wait 30-40 minutes for backup, update, and restart to complete.\n",
+                message)
         await message.channel.send("__**bot.py: Backup, Update, and Restart complete.**__")
 
     # kickmeregister command, one argument, steamid
@@ -410,7 +489,7 @@ to change your registered <steamid>, ping the bot man (StinkyMcKraken)
         # done
         await message.channel.send("**:LGSM updated on all instances:**")
 
-    # start <server>
+    # start <server> [<server> <server> ...]
     elif message.content.startswith(commandchar + 'start'):
         # command channel check
         if message.guild.id != COMMAND_CHANNEL: return
@@ -420,19 +499,11 @@ to change your registered <steamid>, ping the bot man (StinkyMcKraken)
         args.pop(0)
         # test if command was supplied with at least one argument
         if len(args) >= 1:
-            # loop through provided servernames
-            for item in args:
-                if isvalidserver(item):
-                    await runprocesstodiscord(
-                        "/home/ark/" + item + " start",
-                        "__**:Starting " + item + ":**__\n",
-                        message)
-                else:
-                    await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
+            await startservers(args, message)
         else:
             await returninsult(message)
 
-    # stop <server>
+    # stop <server> [<server> <server> ...]
     elif message.content.startswith(commandchar + 'stop'):
         # command channel check
         if message.guild.id != COMMAND_CHANNEL: return
@@ -442,19 +513,13 @@ to change your registered <steamid>, ping the bot man (StinkyMcKraken)
         args.pop(0)
         # test if command was supplied with at least one argument
         if len(args) >= 1:
-            # loop through provided servernames
-            for item in args:
-                if isvalidserver(item):
-                    await runprocesstodiscord(
-                        ["/home/ark/" + item + " stop"],
-                        "__**:Stopping " + item + ":**__\n",
-                        message)
-                else:
-                    await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
+            # handoff to function used by other commands
+            await stopservers(args, message)
         else:
+            # Report invalid syntax
             await returninsult(message)
 
-    # restart <server>
+    # restart <server> [<server> <server> ...]
     elif message.content.startswith(commandchar + 'restart'):
         # command channel check
         if message.guild.id != COMMAND_CHANNEL: return
