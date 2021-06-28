@@ -17,6 +17,10 @@ data = """**aberration**
 **center**
 No Players Connected
 
+**genesis2**
+Connection failed.
+Error 111: Connection refused
+
 """
 
 kickmesteamid = '76561198393377424'
