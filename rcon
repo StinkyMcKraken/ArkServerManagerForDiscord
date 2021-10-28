@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [ -z ${1} ]; then
+        echo "Error, please provide server name"
+        exit 1
+fi
+
+#script should pass argument specifying name of server instance to connnect to
+selfname=${1}
+
+#get variables from lgsm config files
+source /home/ark/scripts/globals.sh
+
+if [ "${2}" ]; then
+        #run rcon as one off command if additional arguments are included
+        ${rcon} "${@: 2}"
+else
+        #run rcon in terminal mode if only server name is provided
+        ${rcon} -t
+fi

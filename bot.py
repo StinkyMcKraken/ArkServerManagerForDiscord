@@ -262,6 +262,9 @@ invokes LGSM forced update. All running servers are given 10 minute notification
 **$backup** -
 invokes LGSM backup. All running servers are given 10 minute notification, stopped, backedup, updated, and restarted. Same cheat as $force
 
+**$destroywilddinos <server> [<server2> <server3> ...]** -
+sends destroywilddinos to listed <server> consoles.  All wild dinos are removed from the map. Does not affect tamed dinos.
+
 **$kick <server> <playersteamid>** -
 sends kick command to <server> to kick <playersteamid>, the numeric identifier supplied after player name in $status
 
@@ -539,6 +542,29 @@ to change your registered <steamid>, ping the bot man (StinkyMcKraken)
                 else:
                     # error message
                     await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
+        else:
+            await returninsult(message)
+
+    # send destroywilddinos to given servername
+    elif message.content.startswith(commandchar + 'destroywilddinos'):
+        # command channel check
+        if message.guild.id != COMMAND_CHANNEL: return
+        # separate arguments into a list
+        args = message.content.split(" ")
+        # remove first item in list, it is the command given
+        args.pop(0)
+        # test if command was supplied with at least one argument
+        if len(args) >= 1:
+            # loop through provided servernames
+            for item in args:
+                if isvalidserver(item):
+                    await runprocesstodiscord(
+                        ["/home/ark/rcon " + item + " destroywilddinos"],
+                        "__**:Destroying Wild Dinos on " + item + ":**__\n",
+                        message)
+                else:
+                    # error message
+                        await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
         else:
             await returninsult(message)
 
