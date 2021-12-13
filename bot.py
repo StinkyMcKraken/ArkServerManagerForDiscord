@@ -75,7 +75,8 @@ serverlist = [
 "genesis",
 "genesis2",
 "arkadmin",
-"arkserver"
+"arkserver",
+"lostisland"
 ]
 
 # Test for valid server name
@@ -314,6 +315,7 @@ to change your registered <steamid>, ping the bot man (StinkyMcKraken)
 27009 genesis
 27010 genesis2
 27011 arkadmin (island)
+27012 lostisland
 """
         await message.channel.send(helpmessage)
 
