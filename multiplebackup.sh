@@ -31,13 +31,10 @@ done
 wait
 
 # update lgsm on all instances
-# this command should run sequentially on each instance instead of simultaneously
+# this updates LinuxGSM using arkserver, then copies arkserver to the
+# other instances
 echo **updating lgsm**
 /home/ark/scripts/updatelgsm.sh
-#for instance in ${lockfiles[@]}
-#do
-#  /home/ark/${instance} update-lgsm
-#done
 
 # run backup on generic instance. we are running instances,
 # backing up one instance will backup entire home directory including
@@ -62,6 +59,5 @@ done
 # wait for instance start scripts to complete
 wait
 
-# send test notification to discord indicating backup is complete
+# indicate we are done
 echo **done**
-#/home/ark/${lockfiles[0]} test-alert
