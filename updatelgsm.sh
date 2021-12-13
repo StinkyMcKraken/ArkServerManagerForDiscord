@@ -16,3 +16,4 @@ cp /home/ark/arkserver /home/ark/valguero
 cp /home/ark/arkserver /home/ark/genesis
 cp /home/ark/arkserver /home/ark/genesis2
 cp /home/ark/arkserver /home/ark/arkadmin
+cp /home/ark/arkserver /home/ark/lostisland
