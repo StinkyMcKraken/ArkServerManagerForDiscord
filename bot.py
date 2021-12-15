@@ -297,6 +297,9 @@ sends kick command to whatever server(s) you are connected to. you must register
 registers your <steamid> to Ark Server Bot so $kickme works.
 YOU CAN ONLY DO THIS ONCE
 to change your registered <steamid>, ping the bot man (StinkyMcKraken)
+
+Server information is pinned to this channel and is updated as needed.
+Click the pushpin icon and scroll to the bottom of the pins list to find instructions for connecting to our servers.
 """
         await message.channel.send(helpmessage)
 
