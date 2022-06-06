@@ -76,7 +76,8 @@ serverlist = [
 "genesis2",
 "arkadmin",
 "arkserver",
-"lostisland"
+"lostisland",
+"fjordur"
 ]
 
 # Test for valid server name
@@ -319,6 +320,7 @@ Click the pushpin icon and scroll to the bottom of the pins list to find instruc
 27010 genesis2
 27011 arkadmin (island)
 27012 lostisland
+27013 fjordur
 """
         await message.channel.send(helpmessage)
 
