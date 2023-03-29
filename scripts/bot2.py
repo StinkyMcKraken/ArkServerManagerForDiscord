@@ -2,6 +2,8 @@
 # bot.py
 
 # Discord Bot for start/stop/update Ark Servers via Discord
+# this bot is intended to run on the test python server
+# it does not reflect the production version of boy.py
 
 # documentation for discord.py is at https://discordpy.readthedocs.io/en/latest/
 
@@ -44,7 +46,7 @@ client = discord.Client()       #create Discord object
 
 # json database for registering kickme command stuff
 # check if json file exists
-jsonfilename = '/home/ark/scripts/kickme.json'
+jsonfilename = 'kickme.json'
 userdata = {}
 if os.path.exists(jsonfilename):
     # Load json file
@@ -60,7 +62,7 @@ if os.path.exists(jsonfilename):
 # Initialize constants
 
 # Initialize command character
-commandchar = "$"
+commandchar = "%"
 
 # Initialize list of valid servers
 serverlist = [
@@ -77,17 +79,18 @@ serverlist = [
 "arkadmin",
 "arkserver",
 "lostisland",
-"fjordur"
+"fjordur",
+"epicisland"
 ]
 
 # Test for valid server name
 def isvalidserver(servername):
-    # iterate through server list
+    #iterate through server list
     for validserver in serverlist:
-        # if valid server name is found, return True
+        #if valid server name is found, return True
         if servername == validserver:
             return True
-    # if no valid name found, return False
+    #if no valid name found, return False
     return False
 
 # Runs given command and feeds it's stdout to Discord in realish time
@@ -99,6 +102,7 @@ async def runprocesstodiscord(cmd, output, message):
         nextline = rc.stdout.readline()
         if nextline == '' and rc.poll() is not None:
             break
+        #print(f'{nextline}')  #echo message to console (debug)
         output = output + escape_ansi(nextline)
         if len(output) > 2000:
             output = nextline
@@ -199,7 +203,7 @@ async def stopservers(args, message):
             # report invalid servername
             await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
 
-# when Discord session is ready, echo status to console
+#when Discord session is ready, echo status to console
 @client.event
 async def on_ready():
     print(
@@ -224,118 +228,55 @@ async def on_message(message):
     # equivalent to hello world
     if message.content.startswith(commandchar + 'hello'):
         # command channel check
-#        if message.guild.id != COMMAND_CHANNEL: return
-        await message.channel.send('What\'s Krackin\'?')
+        if message.guild.id != COMMAND_CHANNEL: return
+        await message.channel.send('What Is Happening?')
 
-    # help command. Shows different help message depending on which
-    # channel the command came from
+    # help command
     elif message.content.startswith(commandchar + 'help'):
         # command channel check
         if message.guild.id == COMMAND_CHANNEL:
-            helpmessage = """This version is super dumb and basic.
-WARNING THERE IS NO IDIOT PROOFING WITH THE FOLLOWING COMMANDS
-BEST TO LET ONE COMMAND COMPLETE BEFORE STARTING ANOTHER
----
-**$hello** -
-simple response test
-
-**$help** -
-this message
-
-**$status** -
-lists all running servers and players connected
-
-**$start <server> [<server2> <server3> ...]** -
-this is known
-
-**$stop <server> [<server2> <server3> ...]** -
-Instant stop, no check for connected players
-
-**$restart <server> [<server2> <server3> ...]** -
-stops then starts <server>. Instant stop, no check for players
-
-**$check**
-checks if an update is available
-
-**$force** -
-invokes LGSM forced update. All running servers are given 10 minute notification, stopped, updated, and restarted.
-*Cheat mode*: if you invoke $force when no players are connected, servers are stopped and restarted automatically and the 10 minute notification is bypassed.
-
-**$backup** -
-invokes LGSM backup. All running servers are given 10 minute notification, stopped, backedup, updated, and restarted. Same cheat as $force
-
-**$destroywilddinos <server> [<server2> <server3> ...]** -
-sends destroywilddinos to listed <server> consoles.  All wild dinos are removed from the map. Does not affect tamed dinos.
-
-**$kick <server> <playersteamid>** -
-sends kick command to <server> to kick <playersteamid>, the numeric identifier supplied after player name in $status
-
-**$kickme**
-sends kick command to whatever server you are connected to. you must register your steamid with $kickmeregister
-
-**$kickmeregister <steamid>**
-registers your <steamid> to Ark Server Bot so $kickme works.
-YOU CAN ONLY DO THIS ONCE
-to change your registered <steamid>, ping the bot man (StinkyMcKraken)
-
-**Use $% to show servers list**
+            helpmessage = """Help is unlikely
+These \%commands run elsewhere and are for testing purposes
 """
+            await message.channel.send(helpmessage)
+        elif message.guild.id == GENERAL_CHANNEL:
+            helpmessage = """This is a test message.
+Nothing to see here.
+Move along.
+"""
+            await message.channel.send(helpmessage)
+
+    # send a message to Discord then change the messages
+    elif message.content.startswith(commandchar + 'editmessage'):
+        tempmessage = await message.channel.send("one")
+        await asyncio.sleep(10)
+        await tempmessage.edit(content="onetwo")
+        await asyncio.sleep(10)
+        await tempmessage.edit(content="one\ntwo\nthree")
+
+    # Test the thing
+    elif message.content.startswith(commandchar + 'testserver'):
+        tempmessage = "testing\n"
+        # separate arguments into a list
+        args = message.content.split(" ")
+        # remove first item in list, it is the command given
+        args.pop(0)
+        # test if command was supplied with at least one argument
+        if len(args) >= 1:
+            # loop through provided servernames
+            for item in args:
+                if isvalidserver(item):
+                    tempmessage = tempmessage + item + " True\n"
+                else:
+                    tempmessage = tempmessage + item + " False\n"
+            await message.channel.send(tempmessage)
         else:
-            helpmessage = """__**Ark Server Bot Commands:**__
-**$help** -
-this message
-
-**$status** -
-lists all running servers and players connected
-
-**$check**
-checks for avaliable update
-
-**$kickme**
-sends kick command to whatever server(s) you are connected to. you must register your steamid with $kickmeregister. steamid visible in $status when connected to ark cluster
-
-**$kickmeregister <steamid>**
-registers your <steamid> to Ark Server Bot so $kickme works.
-YOU CAN ONLY DO THIS ONCE
-to change your registered <steamid>, ping the bot man (StinkyMcKraken)
-
-Server information is pinned to this channel and is updated as needed.
-Click the pushpin icon and scroll to the bottom of the pins list to find instructions for connecting to our servers.
-"""
-        await message.channel.send(helpmessage)
-
-    elif message.content.startswith('$%'):
-        # command channel check
-        if message.guild.id != COMMAND_CHANNEL: return
-        helpmessage="""**Valid <server> at this time**:
-27001 island
-27002 aberration
-27003 ragnarok
-27004 scorched
-27005 center
-27006 crystal
-27007 extinction
-27008 valguero
-27009 genesis
-27010 genesis2
-27011 arkadmin (island)
-27012 lostisland
-27013 fjordur
-"""
-        await message.channel.send(helpmessage)
+            await returninsult(message)
 
     # bot server status
     elif message.content.startswith(commandchar + 'status'):
         rc = subprocess.run("/home/ark/scripts/status.sh", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        await message.channel.send(escape_ansi(rc.stdout))
-
-    # LGSM Check for update
-    elif message.content.startswith(commandchar + 'check'):
-        # run command
-        await runprocesstodiscord(
-            "/home/ark/arkserver check-update",
-            "bot.py: Checking for Update...\n",
-            message)
+        await message.channel.send("__**Test Server Status:**__\n" + escape_ansi(rc.stdout))
 
     # ark force update
     elif message.content.startswith(commandchar + 'force'):
@@ -361,7 +302,7 @@ Click the pushpin icon and scroll to the bottom of the pins list to find instruc
                 "/home/ark/scripts/multipleupdate.sh",
                 "Starting Forced Update in-game notification script. Please wait 15 minutes for update and restart to complete.\n",
                 message)
-        await message.channel.send("__**bot.py: Update and Restart complete.**__")
+        await message.channel.send("__**bot2.py: Update and Restart complete.**__")
 
     # ark backup
     elif message.content.startswith(commandchar + 'backup'):
@@ -387,7 +328,7 @@ Click the pushpin icon and scroll to the bottom of the pins list to find instruc
                 "/home/ark/scripts/multiplebackup.sh",
                 "Starting Backup in-game notification script. Please wait 30-40 minutes for backup, update, and restart to complete.\n",
                 message)
-        await message.channel.send("__**bot.py: Backup, Update, and Restart complete.**__")
+        await message.channel.send("__**bot2.py: Backup, Update, and Restart complete.**__")
 
     # kickmeregister command, one argument, steamid
     # this command must be listed before kickme and kick
@@ -550,29 +491,7 @@ Click the pushpin icon and scroll to the bottom of the pins list to find instruc
                     # error message
                     await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
         else:
-            await returninsult(message)
-
-    # send destroywilddinos to given servername
-    elif message.content.startswith(commandchar + 'destroywilddinos'):
-        # command channel check
-        if message.guild.id != COMMAND_CHANNEL: return
-        # separate arguments into a list
-        args = message.content.split(" ")
-        # remove first item in list, it is the command given
-        args.pop(0)
-        # test if command was supplied with at least one argument
-        if len(args) >= 1:
-            # loop through provided servernames
-            for item in args:
-                if isvalidserver(item):
-                    await runprocesstodiscord(
-                        ["/home/ark/rcon " + item + " destroywilddinos"],
-                        "__**:Destroying Wild Dinos on " + item + ":**__\n",
-                        message)
-                else:
-                    # error message
-                        await message.channel.send("__**>>Bad Server Name: " + item + "<<**__")
-        else:
+            # report invalid syntax
             await returninsult(message)
 
     # unknown command, return random error message
@@ -580,8 +499,6 @@ Click the pushpin icon and scroll to the bottom of the pins list to find instruc
         # command channel check
         if message.guild.id != COMMAND_CHANNEL: return
         await returninsult(message)
-
-
 
 # actually start the Discord session
 client.run(TOKEN)

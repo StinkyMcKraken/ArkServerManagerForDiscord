@@ -17,3 +17,6 @@ cp /home/ark/arkserver /home/ark/genesis
 cp /home/ark/arkserver /home/ark/genesis2
 cp /home/ark/arkserver /home/ark/arkadmin
 cp /home/ark/arkserver /home/ark/lostisland
+cp /home/ark/arkserver /home/ark/fjordur
+cp /home/ark/arkserver /home/ark/epicisland
+
