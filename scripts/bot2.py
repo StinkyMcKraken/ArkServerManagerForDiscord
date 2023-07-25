@@ -28,8 +28,11 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 COMMAND_CHANNEL = int(os.getenv('COMMAND_CHANNEL'))
 # get id of general channel from .env file
 GENERAL_CHANNEL = int(os.getenv('GENERAL_CHANNEL'))
+# set intent, new requirement for discord.py version 2.0.0
+intents = discord.Intents.default()
+intents.message_content = True
 # create Discord object
-client = discord.Client()       #create Discord object
+client = discord.Client(intents = intents)
 
 
 ############################################################
